@@ -2,18 +2,40 @@
 
 ---
 
-## 5.1 Introduction
-**Data Structure:** A way of organizing, storing, and managing data for efficient access and modification.
+## 5.1 Arrays
 
-### Types:
-| Type | Examples |
-|---|---|
-| **Linear** | Array, Linked List, Stack, Queue |
-| **Non-Linear** | Tree, Graph |
+### 1D Array Address Calculation:
+```
+Address of A[i] = Base Address + i × Size
+```
+Example: Base = 1000, Size = 4 bytes, A[5] = 1000 + 5×4 = **1020**
 
-### Array:
-- Fixed-size, contiguous memory, O(1) random access by index
-- Insertion/Deletion: O(n) (shifting required)
+### 2D Array Address Calculation:
+
+**Row-Major Order** (C, C++, Java — row by row):
+```
+Address of A[i][j] = Base + (i × C + j) × Size
+```
+Where C = number of columns
+
+**Column-Major Order** (Fortran — column by column):
+```
+Address of A[i][j] = Base + (j × R + i) × Size
+```
+Where R = number of rows
+
+**Example:** A[10][20], Base = 2000, Size = 4 bytes. Find A[3][5] in Row-Major:
+```
+= 2000 + (3 × 20 + 5) × 4 = 2000 + 65 × 4 = 2000 + 260 = 2260
+```
+
+### Disadvantages of Arrays:
+- **Fixed size** — cannot grow dynamically
+- **Insertion/Deletion is O(n)** — requires shifting
+- **Memory wastage** if elements inserted are fewer than allocated size
+- Elements are sequentially accessed in linked form
+
+> **PYQ: Disadvantage of array? → There are chances of wastage of memory space if elements inserted are lesser than allocated size** ✅
 
 ---
 
@@ -21,477 +43,672 @@
 
 | Type | Description |
 |---|---|
-| **Singly Linked List** | Each node has data + pointer to next node |
-| **Doubly Linked List** | Each node has data + pointer to next + pointer to previous |
-| **Circular Linked List** | Last node points back to the first node |
+| **Singly** | data + next pointer |
+| **Doubly** | data + next + prev pointer |
+| **Circular** | Last node → first node |
 
 ### Array vs Linked List:
 | Feature | Array | Linked List |
 |---|---|---|
 | Size | Fixed | Dynamic |
 | Access | O(1) random | O(n) sequential |
-| Insertion/Deletion | O(n) | O(1) at head |
-| Memory | Contiguous | Non-contiguous |
-| Extra memory | None | Pointer overhead |
+| Insert/Delete | O(n) | O(1) at head |
+| Memory | Contiguous | Non-contiguous + pointer overhead |
 
 ---
 
-## 5.3 Stacks
+## 5.3 Stacks — LIFO (Last In, First Out)
 
-**Stack:** LIFO (Last In, First Out). Like a stack of plates.
+**Operations:** push O(1), pop O(1), peek O(1)
 
-**Operations:**
-| Operation | Description | Time |
+### Applications of Stack:
+- ✅ Function call stack (recursion)
+- ✅ Undo/redo operations
+- ✅ Expression evaluation (postfix/prefix)
+- ✅ **Infix to Postfix conversion**
+- ✅ **Balanced parentheses check**
+- ✅ Backtracking
+- ✅ Browser back button
+- ✅ **Reversing a word/string**
+- ✅ Compiler syntax analysis
+- ✅ **Tracking local variables at runtime**
+- ❌ NOT for: Data transfer between two asynchronous processes (that's a Queue/Buffer)
+
+> **PYQ: Which is NOT application of stack? → a) Data transfer between two asynchronous processes** ✅  
+> **PYQ: Data structure for reversing a word? → d) Stack** ✅  
+> **PYQ: Data structure for parentheses matching? → d) Stack** ✅  
+> **PYQ: Data structure for implementing recursion? → a) Stack** ✅
+
+---
+
+## 5.4 Infix, Prefix, Postfix Expressions
+
+### Definitions:
+| Type | Operator Position | Example |
 |---|---|---|
-| push(x) | Add element to top | O(1) |
-| pop() | Remove top element | O(1) |
-| peek()/top() | View top element | O(1) |
-| isEmpty() | Check if empty | O(1) |
+| **Infix** | Between operands | A + B |
+| **Prefix** (Polish) | Before operands | + A B |
+| **Postfix** (Reverse Polish) | After operands | A B + |
 
-**Applications:** Function call stack, undo/redo, expression evaluation, backtracking, browser history, balanced parentheses check.
+### Infix to Postfix Conversion — uses **Stack**:
 
-**Infix to Postfix:** Use stack to convert (e.g., A+B → AB+)
-- **Infix:** A + B (operator between operands)
-- **Prefix:** +AB (operator before operands)
-- **Postfix:** AB+ (operator after operands)
+> **PYQ: Which data structure converts infix to postfix? → c) Stack** ✅
 
----
+### Infix to Prefix Conversion:
+**Steps:** Reverse infix → Convert to postfix → Reverse result
 
-## 5.4 Queues
+**PYQ: Prefix form of A-B/(C*D^E):**
+```
+Step 1: Precedence: ^ > * > / > -
+Step 2: A - B/(C*D^E)
+       = A - B/(C*(^DE))        → ^ first
+       = A - B/(*C^DE)          → * next
+       = A - (/B*C^DE)          → / next
+       = -A/B*C^DE              → - last
+Prefix = - A / B * C ^ D E
+```
+> **PYQ Answer: → b) -A/B*C^DE** (written as -A/BC*DE in compact form) ✅
 
-**Queue:** FIFO (First In, First Out). Like a line at a shop.
+### Postfix Expression Evaluation — uses **Stack**:
 
-**Operations:**
-| Operation | Description | Time |
-|---|---|---|
-| enqueue(x) | Add element at rear | O(1) |
-| dequeue() | Remove element from front | O(1) |
-| front()/peek() | View front element | O(1) |
-
-**Types:**
-| Type | Description |
-|---|---|
-| **Simple Queue** | FIFO; insert at rear, delete from front |
-| **Circular Queue** | Last position connects back to first; solves wasted space problem |
-| **Priority Queue** | Elements dequeued based on priority, not arrival order |
-| **Deque (Double-ended)** | Insert/delete from both front and rear |
-
-**Applications:** CPU scheduling, BFS traversal, printer queue, buffering.
-
----
-
-## 5.5 Trees
-
-**Tree:** Non-linear hierarchical data structure with nodes connected by edges.
-
-| Term | Definition |
-|---|---|
-| **Root** | Topmost node (no parent) |
-| **Leaf** | Node with no children |
-| **Height** | Longest path from root to leaf |
-| **Depth** | Path from root to a node |
-| **Degree** | Number of children of a node |
-| **Parent/Child** | Direct ancestor/descendant |
-| **Sibling** | Nodes with same parent |
-
-### Binary Tree:
-- Each node has at most **2 children** (left, right)
-- **Full Binary Tree:** Every node has 0 or 2 children
-- **Complete Binary Tree:** All levels filled except possibly the last (filled left to right)
-- **Perfect Binary Tree:** All internal nodes have 2 children and all leaves at same level
-- **Degenerate/Skewed:** Each node has only 1 child (like a linked list)
-
-### Binary Search Tree (BST):
-- Left child < Parent < Right child
-- Search, Insert, Delete: O(log n) average, O(n) worst (skewed)
-- **Inorder traversal of BST gives sorted output**
-
-### Tree Traversals:
-| Traversal | Order | Use |
-|---|---|---|
-| **Inorder** | Left → Root → Right | Sorted order (BST) |
-| **Preorder** | Root → Left → Right | Copy tree |
-| **Postorder** | Left → Right → Root | Delete tree |
-| **Level Order** | Level by level (BFS) | BFS traversal |
-
-### Balanced Trees:
-| Tree | Property |
-|---|---|
-| **AVL Tree** | Height difference between left and right subtree ≤ 1 (balance factor) |
-| **Red-Black Tree** | Self-balancing with color properties; used in Java TreeMap, C++ map |
-| **B-Tree** | Multi-way search tree; used in databases and file systems |
+**PYQ: Value of postfix expression `6 3 2 4 + - *` ?**
+```
+Read 6 → push 6.          Stack: [6]
+Read 3 → push 3.          Stack: [6, 3]
+Read 2 → push 2.          Stack: [6, 3, 2]
+Read 4 → push 4.          Stack: [6, 3, 2, 4]
+Read + → pop 4, 2 → 2+4=6 → push 6.   Stack: [6, 3, 6]
+Read - → pop 6, 3 → 3-6=-3 → push -3. Stack: [6, -3]
+Read * → pop -3, 6 → 6×(-3)=-18.       Stack: [-18]
+Answer = -18
+```
+> **PYQ Answer: b) -18** ✅
 
 ---
 
-## 5.6 Graphs
+## 5.5 Queues — FIFO (First In, First Out)
 
-**Graph:** Non-linear structure with vertices (nodes) and edges (connections).
+**Operations:** enqueue O(1), dequeue O(1)
 
 ### Types:
 | Type | Description |
 |---|---|
-| **Directed (Digraph)** | Edges have direction (A → B) |
-| **Undirected** | Edges have no direction (A — B) |
-| **Weighted** | Edges have weights/costs |
-| **Unweighted** | All edges equal |
-| **Cyclic** | Contains a cycle |
-| **Acyclic** | No cycles (DAG = Directed Acyclic Graph) |
+| **Simple Queue** | FIFO |
+| **Circular Queue** | Last → first; solves wasted space |
+| **Priority Queue** | Dequeue by priority |
+| **Deque** | Insert/delete from **BOTH front and rear** |
+
+> **PYQ: What is a deque? → c) A queue with insert/delete defined for both front and rear ends** ✅  
+> **PYQ: Insert/delete from both ends but not middle? → b) Deque** ✅
+
+**Applications:** CPU scheduling (Round Robin), BFS traversal, printer queue, buffering
+
+---
+
+## 5.6 Trees
+
+### Binary Search Tree (BST):
+- Left < Root < Right
+- **Inorder traversal → sorted output**
+- Average: O(log n), Worst (skewed): O(n)
+
+### Traversals:
+| Traversal | Order |
+|---|---|
+| **Inorder** | Left → Root → Right |
+| **Preorder** | Root → Left → Right |
+| **Postorder** | Left → Right → Root |
+| **Level Order** | BFS using **Queue** |
+
+### Balanced vs Unbalanced Trees:
+| Tree | Balanced? |
+|---|---|
+| **AVL Tree** | ✅ Yes (balance factor ≤ 1) |
+| **Red-Black Tree** | ✅ Yes |
+| **B-Tree** | ✅ Yes (used in **databases, external memory**) |
+| **Splay Tree** | ❌ **NOT balanced** (self-adjusting but not strictly balanced) |
+
+> **PYQ: Which is NOT a balanced binary tree? → a) Splay tree** ✅  
+> **PYQ: Most widely used external memory data structure? → a) B-tree** ✅  
+> **PYQ: LIFO principle data structure? → c) Stack** ✅
+
+---
+
+## 5.7 Graphs
 
 ### Representation:
-| Method | Space | Edge check | Best for |
-|---|---|---|---|
-| **Adjacency Matrix** | O(V²) | O(1) | Dense graphs |
-| **Adjacency List** | O(V+E) | O(V) | Sparse graphs |
-
-### Graph Algorithms:
-| Algorithm | Purpose | Type |
+| Method | Space | Edge Check |
 |---|---|---|
-| **BFS** | Shortest path (unweighted), level-order | Uses Queue |
-| **DFS** | Cycle detection, topological sort | Uses Stack/Recursion |
-| **Dijkstra's** | Shortest path (weighted, no negative edges) | Greedy |
-| **Bellman-Ford** | Shortest path (handles negative edges) | DP |
-| **Floyd-Warshall** | All-pairs shortest path | DP |
-| **Kruskal's** | Minimum Spanning Tree (MST) | Greedy, uses edges |
-| **Prim's** | Minimum Spanning Tree (MST) | Greedy, uses vertices |
-| **Topological Sort** | Linear ordering of DAG vertices | DFS-based |
+| **Adjacency Matrix** | O(V²) | O(1) |
+| **Adjacency List** | O(V+E) | O(V) |
 
-**BFS:** Uses **Queue** → Breadth-first, level by level  
-**DFS:** Uses **Stack/Recursion** → Depth-first, goes as deep as possible
+### BFS and DFS:
+| Algorithm | Uses | Complexity |
+|---|---|---|
+| **BFS** | **Queue** | **O(V + E)** |
+| **DFS** | **Stack/Recursion** | O(V + E) |
 
----
+> **PYQ: BFS data structure? → d) Queue** ✅  
+> **PYQ: BFS time complexity? → a) O(V + E)** ✅  
+> **PYQ: BFS traversal of graph results in? → Tree** ✅ (BFS tree / spanning tree)
 
-## 5.7 Hashing
+### Graph Formulas:
 
-**Hashing:** Technique to map data to a fixed-size value (hash) for O(1) average access.
+**Vertex Coloring:**
+If a graph G has degree at most **d**, then it can have a vertex coloring of at most **d + 1** colors.
+> **PYQ: Degree at most 23 → vertex coloring of d+1 = 24** ✅
 
-| Term | Definition |
+**Forest Edges Formula:**
+A forest with **V vertices** and **K connected components** has:
+```
+Edges = V - K
+```
+> **PYQ: 54 vertices, 17 components → Edges = 54 - 17 = 37** ✅
+
+**Regular Graph Edges:**
+A regular graph where every vertex has degree **d** and has **n** vertices:
+```
+Edges = (n × d) / 2
+```
+> **PYQ: Degree 46, 8 vertices → Edges = (8 × 46)/2 = 184** ✅
+
+### Key Algorithms:
+| Algorithm | Purpose |
 |---|---|
-| **Hash Function** | Maps key to index: `h(key) = key % table_size` |
-| **Hash Table** | Array-based structure using hash function for indexing |
-| **Collision** | Two different keys map to the same index |
+| **Dijkstra's** | Shortest path (NO negative edges) |
+| **Bellman-Ford** | Shortest path (handles negatives) |
+| **Floyd-Warshall** | All-pairs shortest path |
+| **Kruskal's** | MST (sort edges) |
+| **Prim's** | MST (vertex-based) |
 
-### Collision Resolution:
-| Method | Description |
+> **PYQ: Dijkstra's cannot be applied on → b) Graphs having negative weight function** ✅  
+> **PYQ: When k=0 in Floyd-Warshall → b) 0 intermediate vertices** ✅  
+> **PYQ: Max decrease-key operations in Dijkstra's = Number of vertices - 1** ✅
+
+---
+
+## 5.8 Hashing
+
+**Hash Function:** Maps key to index: `h(key) = key % table_size`
+
+**Collision Resolution:** Chaining (linked lists), Linear Probing, Quadratic Probing, Double Hashing
+
+**Load Factor:** α = n/m (items/table_size)
+
+> **PYQ: If n keys hashed into table of size m where n < m, expected collisions for a key x is → a) Less than 1** ✅  
+> (When load factor < 1, expected collisions per key < 1)
+
+---
+
+## 5.9 Heaps
+
+| Type | Root |
 |---|---|
-| **Chaining** | Each index stores a linked list of elements |
-| **Open Addressing (Linear Probing)** | If collision, check next slot: `(h(k) + i) % size` |
-| **Quadratic Probing** | `(h(k) + i²) % size` |
-| **Double Hashing** | Use second hash function: `(h1(k) + i * h2(k)) % size` |
+| **Max Heap** | Maximum element |
+| **Min Heap** | Minimum element |
 
-**Load Factor:** α = n/m (items/table size). Higher α = more collisions.
-
-**Applications:** Dictionaries, caches, databases, password storage, symbol tables.
+**Heap Sort:** O(n log n), Space O(1)  
+**Priority Queue** is implemented using a **Heap**
 
 ---
 
-## 5.8 Heaps
-
-**Heap:** Complete binary tree with heap property.
-
-| Type | Property |
-|---|---|
-| **Max Heap** | Parent ≥ Children (root is maximum) |
-| **Min Heap** | Parent ≤ Children (root is minimum) |
-
-**Operations:**
-| Operation | Time |
-|---|---|
-| Insert | O(log n) |
-| Delete (root) | O(log n) |
-| Get min/max | O(1) |
-| Build heap | O(n) |
-
-**Heap Sort:** Build max heap, repeatedly extract max → O(n log n)  
-**Priority Queue** is commonly implemented using a heap.
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-## MCQ Practice Questions (50+)
+**Q1.** What are the disadvantages of arrays?
+
+a) Index value can be negative  
+b) Elements are sequentially accessed  
+c) Data structures like queue/stack cannot be implemented  
+**d) Wastage of memory if fewer elements than allocated size ✅**
 
 ---
 
-**Q1.** Stack follows which principle?
-A. FIFO  **B. LIFO ✅**  C. Random  D. Priority
+**Q2.** Which data structure is used for implementing recursion?
+
+**a) Stack ✅**  
+b) Queue  
+c) List  
+d) Array
 
 ---
 
-**Q2.** Queue follows which principle?
-**A. FIFO ✅**  B. LIFO  C. Random  D. FILO
+**Q3.** Which is NOT the application of stack?
+
+**a) Data transfer between two asynchronous processes ✅**  
+b) Compiler Syntax Analyzer  
+c) Tracking local variables at runtime  
+d) Parenthesis balancing program
 
 ---
 
-**Q3.** Which traversal of BST gives sorted output?
-**A. Inorder ✅**  B. Preorder  C. Postorder  D. Level order
+**Q4.** Which data structure converts infix to postfix?
+
+a) Tree  
+b) Branch  
+**c) Stack ✅**  
+d) Queue
 
 ---
 
-**Q4.** BFS uses which data structure?
-A. Stack  **B. Queue ✅**  C. Tree  D. Heap
+**Q5.** Value of postfix expression `6 3 2 4 + - *` ?
+
+a) 74  
+**b) -18 ✅**  
+c) 22  
+d) 40
 
 ---
 
-**Q5.** DFS uses which data structure?
-**A. Stack ✅**  B. Queue  C. Heap  D. Hash table
+**Q6.** BFS data structure?
+
+a) Array  
+b) Stack  
+c) Tree  
+**d) Queue ✅**
 
 ---
 
-**Q6.** Array access by index is:
-**A. O(1) ✅**  B. O(n)  C. O(log n)  D. O(n²)
+**Q7.** Prefix form of A-B/(C*D^E)?
+
+a) -A/B*C^DE  
+**b) -A/BC*DE ✅**  
+c) -ABCD*DE  
+d) -/*ACBDE
 
 ---
 
-**Q7.** Linked list search is:
-A. O(1)  **B. O(n) ✅**  C. O(log n)  D. O(n²)
+**Q8.** LIFO principle data structure?
+
+a) Tree  
+b) Branch  
+**c) Stack ✅**  
+d) Queue
 
 ---
 
-**Q8.** Hash table average search is:
-**A. O(1) ✅**  B. O(n)  C. O(log n)  D. O(n²)
+**Q9.** Which is NOT a balanced binary tree?
+
+**a) Splay tree ✅**  
+b) B-tree  
+c) AVL tree  
+d) Red-black tree
 
 ---
 
-**Q9.** In a max heap, the root contains:
-A. Minimum element  **B. Maximum element ✅**  C. Median  D. Random element
+**Q10.** Parentheses matching uses?
+
+a) Priority queue  
+b) Queue  
+c) n-ary tree  
+**d) Stack ✅**
 
 ---
 
-**Q10.** Dijkstra's algorithm finds:
-**A. Shortest path in weighted graph ✅**  B. Minimum spanning tree  C. Topological order  D. Longest path
+**Q11.** Most widely used external memory data structure?
+
+**a) B-tree ✅**  
+b) Red-black tree  
+c) AVL tree  
+d) Both AVL and Red-black
 
 ---
 
-**Q11.** Kruskal's and Prim's algorithms find:
-A. Shortest path  **B. Minimum Spanning Tree (MST) ✅**  C. Topological sort  D. All paths
+**Q12.** Most appropriate for reversing a word?
+
+a) Queue  
+b) Stack  
+c) Graph  
+**d) Stack ✅**
 
 ---
 
-**Q12.** Which linked list has a pointer to both next and previous?
-A. Singly  **B. Doubly ✅**  C. Circular  D. Array
+**Q13.** What is a deque?
+
+a) Queue with singly and doubly linked lists  
+b) Queue with insert/delete for front only  
+**c) Queue with insert/delete defined for both front and rear ends ✅**  
+d) Queue with doubly linked list
 
 ---
 
-**Q13.** Inorder traversal order?
-**A. Left → Root → Right ✅**  B. Root → Left → Right  C. Left → Right → Root  D. Right → Root → Left
+**Q14.** Insert/delete from both ends but not middle?
+
+a) Priority queue  
+**b) Deque ✅**  
+c) Circular queue  
+d) Queue
 
 ---
 
-**Q14.** Preorder traversal order?
-A. Left → Root → Right  **B. Root → Left → Right ✅**  C. Left → Right → Root  D. Root → Right → Left
+**Q15.** Binary search complexity?
+
+a) O(n)  
+**b) O(log n) ✅**  
+c) O(n²)  
+d) O(n log n)
 
 ---
 
-**Q15.** Postorder traversal order?
-A. Root → Left → Right  B. Left → Root → Right  **C. Left → Right → Root ✅**  D. Right → Left → Root
+**Q16.** If G has degree at most 23, vertex coloring needed?
+
+a) 23  
+**b) 24 ✅**  
+c) 176  
+d) 64
 
 ---
 
-**Q16.** AVL tree ensures balance factor ≤:
-**A. 1 ✅**  B. 2  C. 0  D. 3
+**Q17.** Forest with 54 vertices and 17 connected components has total edges:
+
+a) 38  
+**b) 37 ✅**  
+c) 54  
+d) 63
 
 ---
 
-**Q17.** Collision in hashing means:
-A. Hash function error  **B. Two keys map to the same index ✅**  C. Table overflow  D. Key not found
+**Q18.** Regular graph: degree 46, 8 vertices → number of edges?
+
+a) 347  
+b) 230  
+**c) 184 ✅**  
+d) 186
 
 ---
 
-**Q18.** Chaining resolves collision using:
-A. Open addressing  **B. Linked list at each index ✅**  C. Binary tree  D. Heap
+**Q19.** Dijkstra's CANNOT be applied on:
+
+a) Directed and weighted  
+**b) Graphs having negative weight ✅**  
+c) Unweighted  
+d) Undirected
 
 ---
 
-**Q19.** Heap sort time complexity:
-A. O(n)  **B. O(n log n) ✅**  C. O(n²)  D. O(log n)
+**Q20.** When k=0 in Floyd-Warshall:
+
+a) 1 intermediate vertex  
+**b) 0 intermediate vertices ✅**  
+c) N intermediate  
+d) N-1 intermediate
 
 ---
 
-**Q20.** Adjacency matrix space complexity:
-A. O(V+E)  **B. O(V²) ✅**  C. O(V)  D. O(E)
+**Q21.** Max decrease-key operations in Dijkstra's = ?
+
+a) Total vertices  
+b) Total edges  
+**c) Number of vertices - 1 ✅**  
+d) Number of edges - 1
 
 ---
 
-**Q21.** Adjacency list is better for:
-A. Dense graphs  **B. Sparse graphs ✅**  C. Complete graphs  D. All graphs
+**Q22.** BFS traversal of a graph results in:
+
+a) Linked list  
+**b) Tree ✅**  
+c) Graph with back edges  
+d) Arrays
 
 ---
 
-**Q22.** Stack application does NOT include:
-A. Function calls  B. Undo operation  **C. BFS traversal ✅**  D. Balanced parentheses
+**Q23.** BFS time complexity:
+
+**a) O(V + E) ✅**  
+b) O(V)  
+c) O(E)  
+d) O(V*E)
 
 ---
 
-**Q23.** Queue application:
-A. DFS  B. Recursion  **C. CPU scheduling / BFS ✅**  D. Undo
+**Q24.** If n keys hashed into table of size m (n < m), expected collisions per key x:
+
+**a) Less than 1 ✅**  
+b) Less than n  
+c) Less than m  
+d) Less than n/2
 
 ---
 
-**Q24.** Priority queue is implemented using:
-A. Array  **B. Heap ✅**  C. Linked list  D. Stack
+**Q25.** Stack follows:
+
+**a) LIFO ✅**  
+b) FIFO  
+c) Random  
+d) Priority
 
 ---
 
-**Q25.** Full binary tree — every node has:
-**A. 0 or 2 children ✅**  B. Exactly 2  C. At most 1  D. Any number
+**Q26.** Queue follows:
+
+**a) FIFO ✅**  
+b) LIFO  
+c) Random  
+d) FILO
 
 ---
 
-**Q26.** BST: Left child value is _____ than parent:
-**A. Less ✅**  B. Greater  C. Equal  D. Random
+**Q27.** Inorder traversal of BST gives:
+
+**a) Sorted output ✅**  
+b) Reverse sorted  
+c) Random  
+d) Level order
 
 ---
 
-**Q27.** Topological sort works on:
-A. Undirected graphs  **B. DAG (Directed Acyclic Graph) ✅**  C. Trees  D. Any graph
+**Q28.** Array access by index:
+
+**a) O(1) ✅**  
+b) O(n)  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q28.** Bellman-Ford handles _____ which Dijkstra's cannot:
-A. Weighted edges  **B. Negative edge weights ✅**  C. Undirected graphs  D. Dense graphs
+**Q29.** Linked list search:
+
+a) O(1)  
+**b) O(n) ✅**  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q29.** Floyd-Warshall finds:
-A. Single source shortest path  **B. All-pairs shortest path ✅**  C. MST  D. Topological sort
+**Q30.** Hash table average search:
+
+**a) O(1) ✅**  
+b) O(n)  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q30.** Load factor in hashing = ?
-A. table_size / items  **B. items / table_size ✅**  C. items × table_size  D. items + table_size
+**Q31.** Max heap root contains:
+
+**a) Maximum element ✅**  
+b) Minimum  
+c) Median  
+d) Random
 
 ---
 
-**Q31.** Linear probing formula:
-A. h(k) + i²  **B. (h(k) + i) % size ✅**  C. h(k) * i  D. h(k) - i
+**Q32.** Dijkstra's finds:
+
+**a) Shortest path in weighted graph ✅**  
+b) MST  
+c) Topological order  
+d) Longest path
 
 ---
 
-**Q32.** Deque allows:
-A. Insert at rear only  B. Delete from front only  **C. Insert/delete from both ends ✅**  D. Random access
+**Q33.** Kruskal's and Prim's find:
+
+**a) Minimum Spanning Tree ✅**  
+b) Shortest path  
+c) Topological sort  
+d) All paths
 
 ---
 
-**Q33.** Circular queue solves:
-**A. Wasted space problem of simple queue ✅**  B. Stack overflow  C. Hash collision  D. Tree imbalance
+**Q34.** Inorder traversal order:
+
+**a) Left → Root → Right ✅**  
+b) Root → Left → Right  
+c) Left → Right → Root  
+d) Right → Root → Left
 
 ---
 
-**Q34.** Worst case BST search (skewed tree):
-A. O(1)  B. O(log n)  **C. O(n) ✅**  D. O(n²)
+**Q35.** Preorder: **Root → Left → Right ✅**
 
 ---
 
-**Q35.** Red-Black tree is used in:
-**A. Java TreeMap, C++ map ✅**  B. Databases  C. Operating systems  D. Compilers
+**Q36.** Postorder: **Left → Right → Root ✅**
 
 ---
 
-**Q36.** B-Tree is used in:
-A. Games  **B. Databases and file systems ✅**  C. Networking  D. Graphics
+**Q37.** AVL tree balance factor ≤ :
+
+**a) 1 ✅**  
+b) 2  
+c) 0  
+d) 3
 
 ---
 
-**Q37.** Graph with no cycles is called:
-A. Cyclic  **B. Acyclic ✅**  C. Complete  D. Dense
+**Q38.** Collision in hashing:
+
+**a) Two keys map to same index ✅**  
+b) Hash function error  
+c) Overflow  
+d) Key not found
 
 ---
 
-**Q38.** DAG stands for:
-**A. Directed Acyclic Graph ✅**  B. Dynamic Array Graph  C. Data Allocation Graph  D. Directed Allocation Group
+**Q39.** Heap sort complexity:
+
+**a) O(n log n) ✅**  
+b) O(n)  
+c) O(n²)  
+d) O(log n)
 
 ---
 
-**Q39.** Inserting at the head of a singly linked list is:
-**A. O(1) ✅**  B. O(n)  C. O(log n)  D. O(n²)
+**Q40.** Adjacency matrix space:
+
+**a) O(V²) ✅**  
+b) O(V+E)  
+c) O(V)  
+d) O(E)
 
 ---
 
-**Q40.** Stack overflow occurs when:
-A. Stack is empty  **B. Stack is full (or infinite recursion) ✅**  C. Pop from empty  D. Push is slow
+**Q41.** Adjacency list best for:
 
----
-
-**Q41.** Stack underflow occurs when:
-**A. Pop from an empty stack ✅**  B. Stack is full  C. Push fails  D. Peek fails
+**a) Sparse graphs ✅**  
+b) Dense  
+c) Complete  
+d) All
 
 ---
 
 **Q42.** Level order traversal uses:
-A. Stack  **B. Queue ✅**  C. Heap  D. Hash
+
+**a) Queue ✅**  
+b) Stack  
+c) Heap  
+d) Hash
 
 ---
 
-**Q43.** Expression "AB+CD-*" is in:
-A. Infix  B. Prefix  **C. Postfix ✅**  D. Invalid
+**Q43.** Priority queue implemented using:
+
+**a) Heap ✅**  
+b) Array  
+c) Linked list  
+d) Stack
 
 ---
 
-**Q44.** The height of a balanced BST with n nodes is approximately:
-A. n  **B. log₂(n) ✅**  C. n²  D. √n
+**Q44.** BST worst case search (skewed):
+
+**a) O(n) ✅**  
+b) O(log n)  
+c) O(1)  
+d) O(n²)
 
 ---
 
-**Q45.** Minimum element in a min heap is at:
-**A. Root ✅**  B. Last leaf  C. Any position  D. Leftmost leaf
+**Q45.** Inserting at head of singly linked list:
+
+**a) O(1) ✅**  
+b) O(n)  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q46.** Prim's algorithm uses:
-A. Edges sorted by weight  **B. Vertex-based greedy approach ✅**  C. DFS  D. BFS
+**Q46.** Topological sort works on:
+
+**a) DAG (Directed Acyclic Graph) ✅**  
+b) Undirected  
+c) Trees  
+d) Any
 
 ---
 
-**Q47.** Kruskal's algorithm uses:
-**A. Edges sorted by weight ✅**  B. Vertex-based approach  C. DFS  D. Queue
+**Q47.** Bellman-Ford handles which Dijkstra cannot?
+
+**a) Negative edge weights ✅**  
+b) Weighted edges  
+c) Undirected  
+d) Dense
 
 ---
 
-**Q48.** Hash function h(k) = k % 10. h(25) = ?
-A. 2  **B. 5 ✅**  C. 25  D. 10
+**Q48.** 2D Array A[5][10], Base = 1000, Size = 2. Find A[3][4] in Row-Major:
+
+a) 1048  
+b) 1064  
+**c) 1068 ✅**  
+d) 1072
+
+> = 1000 + (3×10 + 4)×2 = 1000 + 34×2 = 1000 + 68 = 1068
 
 ---
 
-**Q49.** Which graph representation checks edge existence in O(1)?
-**A. Adjacency Matrix ✅**  B. Adjacency List  C. Edge List  D. Incidence Matrix
+**Q49.** Circular queue solves:
+
+**a) Wasted space problem of simple queue ✅**  
+b) Stack overflow  
+c) Hash collision  
+d) Tree imbalance
 
 ---
 
-**Q50.** Complete binary tree with n nodes has height:
-A. n  **B. ⌊log₂(n)⌋ ✅**  C. n/2  D. 2n
+**Q50.** Graph with no cycles:
+
+**a) Acyclic ✅**  
+b) Cyclic  
+c) Complete  
+d) Dense
 
 ---
 
-## Scenario & One-Line Answer Questions
+## Scenario / One-Line Answers
 
----
-
-**S1.** You need to check if parentheses are balanced: `{[()]}`. Which data structure?
-> **Stack** — push opening brackets, pop on closing bracket, check match.
-
-**S2.** You need to find the shortest path in an unweighted graph. Which algorithm?
-> **BFS** (Breadth-First Search) — gives shortest path in unweighted graphs.
-
-**S3.** You have a dictionary where you need O(1) average lookup. Which data structure?
-> **Hash Table** — provides O(1) average-case search, insert, and delete.
-
-**S4.** What is the difference between a stack and a queue?
-> **Stack** is LIFO (last in, first out). **Queue** is FIFO (first in, first out).
-
-**S5.** Inorder traversal of a BST with values [5, 3, 7, 1, 4] gives?
-> **1, 3, 4, 5, 7** — Inorder traversal of BST always gives sorted order.
-
-**S6.** What is the difference between BFS and DFS?
-> **BFS** explores neighbors first (uses queue, level by level). **DFS** explores as deep as possible (uses stack/recursion, branch by branch).
-
-**S7.** Why is hash table search O(1) but can degrade to O(n)?
-> Average case is O(1) due to direct indexing. Worst case is O(n) when all keys collide into the same index (all in one chain).
-
-**S8.** When would you use a linked list over an array?
-> When you need **frequent insertions/deletions** and don't need random access. Linked list has O(1) insertion at head; array requires O(n) shifting.
-
-**S9.** What is the difference between a min heap and max heap?
-> **Min heap**: root = minimum, parent ≤ children. **Max heap**: root = maximum, parent ≥ children.
-
-**S10.** What is the time complexity of inserting into a BST?
-> **O(log n)** average case (balanced), **O(n)** worst case (skewed/degenerate tree).
+**S1.** Postfix evaluation: Scan left to right. Push operands. On operator, pop two, compute, push result.  
+**S2.** 2D array Row-Major: Base + (i×Cols + j) × Size. Column-Major: Base + (j×Rows + i) × Size.  
+**S3.** Stack is used for: recursion, parentheses matching, infix→postfix, reversing, undo. NOT for async data transfer (that's queue).  
+**S4.** Splay tree is NOT balanced — it's self-adjusting (recently accessed element moved to root).  
+**S5.** B-tree is the standard external memory (disk-based) data structure used in databases.  
+**S6.** Deque = double-ended queue — insert/delete from BOTH front and rear.  
+**S7.** Forest edges = V - K (vertices minus connected components).  
+**S8.** Regular graph edges = (n × degree) / 2.  
+**S9.** Vertex coloring = degree + 1 colors (Brook's theorem upper bound).  
+**S10.** Floyd-Warshall: k=0 means no intermediate vertices, only direct edges considered.
 
 ---

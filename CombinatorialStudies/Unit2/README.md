@@ -17,26 +17,30 @@
 ### Devices:
 | Device | OSI Layer | Function |
 |---|---|---|
-| **Hub** | Layer 1 | Broadcasts to all ports |
+| **Hub** | Layer 1 | Broadcasts to ALL ports |
 | **Switch** | Layer 2 | Forwards using MAC address |
 | **Router** | Layer 3 | Routes using IP address |
 | **Bridge** | Layer 2 | Connects two LANs |
 | **Gateway** | Layer 7 | Protocol translation |
-| **Repeater** | Layer 1 | Amplifies signals |
+| **Repeater** | Layer 1 | Amplifies/regenerates signals |
+
+---
 
 ## 2.2 Topologies
 | Topology | Key Feature |
 |---|---|
-| **Bus** | Single backbone; single point of failure |
-| **Star** | Central hub/switch; hub failure = network down |
-| **Ring** | Circular; one node failure breaks ring |
+| **Bus** | Single backbone; collision domain |
+| **Star** | Central hub; hub failure = network down |
+| **Ring** | Circular; token passing |
 | **Mesh** | Full: n(n-1)/2 connections; most reliable |
 | **Tree** | Hierarchical; scalable |
+
+---
 
 ## 2.3 OSI Model (7 Layers)
 | # | Layer | Function | Protocols | Data Unit |
 |---|---|---|---|---|
-| 7 | Application | User services | HTTP, FTP, SMTP, DNS | Data |
+| 7 | Application | User services | HTTP, FTP, SMTP, DNS, DHCP | Data |
 | 6 | Presentation | Encryption, compression | SSL/TLS, JPEG | Data |
 | 5 | Session | Session management | NetBIOS, RPC | Data |
 | 4 | Transport | End-to-end delivery | TCP, UDP | Segment |
@@ -58,346 +62,558 @@
 | Feature | TCP | UDP |
 |---|---|---|
 | Connection | Connection-oriented | Connectionless |
-| Reliable | Yes (ACK, retransmit) | No |
+| Reliable | Yes | No |
 | Speed | Slower | Faster |
 | Header | 20 bytes | 8 bytes |
-| Use | HTTP, FTP, Email | DNS, Gaming, VoIP |
+| Use | HTTP, FTP, Email, SSH | DNS, Gaming, VoIP, Multimedia |
 
 **TCP 3-Way Handshake:** SYN → SYN-ACK → ACK
 
+### Transport Layer Protocols for Common Services:
+| Service | Protocol |
+|---|---|
+| **Real-time multimedia** | UDP |
+| **File transfer (FTP)** | TCP |
+| **DNS** | UDP (queries), TCP (zone transfer) |
+| **Email (SMTP)** | TCP |
+
+> **PYQ:** Protocols for multimedia, file transfer, DNS, email = **UDP, TCP, UDP and TCP** ✅
+
+---
+
 ## 2.6 IP Addressing & Subnetting
-| Class | Range | Default Mask | Hosts |
-|---|---|---|---|
-| A | 1-126.x.x.x | /8 (255.0.0.0) | ~16M |
-| B | 128-191.x.x.x | /16 (255.255.0.0) | ~65K |
-| C | 192-223.x.x.x | /24 (255.255.255.0) | 254 |
-| D | 224-239.x.x.x | Multicast | — |
 
-**Private IPs:** 10.x.x.x, 172.16-31.x.x, 192.168.x.x  
-**Loopback:** 127.0.0.1  
-**Subnet hosts:** 2^h - 2 (h = host bits)
+| Class | Range | Default Mask | # Networks | Hosts/Network |
+|---|---|---|---|---|
+| **A** | 1-126.x.x.x | /8 (255.0.0.0) | 2^7 - 2 = 126 | ~16M |
+| **B** | 128-191.x.x.x | /16 (255.255.0.0) | 2^14 = 16384 | ~65K |
+| **C** | 192-223.x.x.x | /24 (255.255.255.0) | **2^21** = 2,097,152 | 254 |
+| **D** | 224-239.x.x.x | Multicast | — | — |
+| **E** | 240-255.x.x.x | Reserved | — | — |
 
-## 2.7 Key Protocols
+> **PYQ: Number of networks in Class C = 2^21** ✅
+
+### Special Addresses:
+- **127.0.0.1** — Loopback (localhost) → can be used as BOTH source and destination IP
+- **0.0.0.0** — Default/unspecified
+- **255.255.255.255** — Broadcast
+- Private: 10.x.x.x, 172.16-31.x.x, 192.168.x.x
+
+> **PYQ: Which IP can be used as both Source and Destination? → 127.0.0.1** ✅
+
+### Subnetting:
+- Subnets = 2^n (n = borrowed bits)
+- Hosts per subnet = **2^h - 2** (h = host bits; -2 for network & broadcast)
+- /26 → 6 host bits → 2^6 - 2 = 62 usable hosts
+- /28 → 4 host bits → 2^4 - 2 = 14 usable hosts
+
+---
+
+## 2.7 Token Ring Network Calculations
+
+### 1-Bit Delay Calculation:
+```
+1-bit delay = distance / propagation speed
+```
+
+**PYQ:** Transmission speed = 10^7 bps, propagation = 200 m/μs = 200 × 10^6 m/s
+```
+Time for 1 bit = 1 / 10^7 = 10^-7 seconds = 0.1 μs
+Distance in 0.1 μs = 200 × 10^6 × 10^-7 = 20 metres
+```
+> **Answer: 20 metres of cable** ✅
+
+### Ethernet Cable Length Calculation:
+**PYQ:** 500 Mbps, frames = 10,000 bits, signal speed = 2×10^5 km/s (2×10^8 m/s)
+```
+Transmission time = Frame size / Data rate = 10000 / (500 × 10^6) = 2 × 10^-5 s
+Max cable length = speed × time / 2 = (2 × 10^8 × 2 × 10^-5) / 2 = 2000 m = 2 km
+```
+> **Answer: 2 km** ✅
+
+---
+
+## 2.8 Key Protocols & Port Numbers
+
 | Protocol | Port | Function |
 |---|---|---|
 | HTTP | 80 | Web (unencrypted) |
 | HTTPS | 443 | Web (encrypted) |
 | FTP | 20/21 | File transfer |
 | SSH | 22 | Secure remote login |
-| Telnet | 23 | Remote login (insecure) |
+| Telnet | 23 | Remote login (insecure, plaintext) |
 | SMTP | 25 | Send email |
 | DNS | 53 | Domain → IP |
 | DHCP | 67/68 | Auto IP assignment |
 | POP3 | 110 | Retrieve email (download & delete) |
 | IMAP | 143 | Retrieve email (sync, keep on server) |
-| ARP | — | IP → MAC resolution |
+| ARP | — | IP → MAC |
 | ICMP | — | Ping, error reporting |
 
 ---
 
-## MCQ Practice Questions (50+)
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-**Q1.** Which OSI layer handles routing?
-A. Transport  B. Data Link  **C. Network ✅**  D. Session
+**Q1.** Which of the following can be used as both Source and Destination IP?
+
+a) 198.168.1.255  
+b) 10.0.0.1  
+**c) 127.0.0.1 ✅**  
+d) 255.255.255.255
 
 ---
 
-**Q2.** Default subnet mask for Class B?
-A. 255.0.0.0  **B. 255.255.0.0 ✅**  C. 255.255.255.0  D. 255.255.255.255
+**Q2.** In a token ring network, transmission speed is 10^7 bps and propagation speed is 200 meters/μs. The 1-bit delay is equivalent to:
+
+a) 500 metres  
+b) 200 metres  
+**c) 20 metres ✅**  
+d) 50 metres
 
 ---
 
-**Q3.** DNS resolves:
-A. MAC to IP  **B. Domain name to IP ✅**  C. IP to MAC  D. Port to IP
+**Q3.** In IPv4, the number of networks allowed under Class C is:
+
+a) 2^14  
+**b) 2^21 ✅**  
+c) 2^24  
+d) 2^7
 
 ---
 
-**Q4.** Which is connectionless?
-A. TCP  **B. UDP ✅**  C. HTTP  D. FTP
+**Q4.** Transport layer protocols for real-time multimedia, file transfer, DNS, and email respectively are:
+
+a) TCP, UDP, UDP and TCP  
+b) UDP, TCP, TCP and UDP  
+**c) UDP, TCP, UDP and TCP ✅**  
+d) TCP, UDP, TCP and UDP
 
 ---
 
-**Q5.** How many OSI layers?
-A. 4  B. 5  **C. 7 ✅**  D. 6
+**Q5.** Which OSI layer handles routing?
+
+a) Transport  
+b) Data Link  
+**c) Network ✅**  
+d) Session
 
 ---
 
-**Q6.** Router operates at which layer?
-A. Layer 1  B. Layer 2  **C. Layer 3 ✅**  D. Layer 4
+**Q6.** Default subnet mask for Class B?
+
+a) 255.0.0.0  
+**b) 255.255.0.0 ✅**  
+c) 255.255.255.0  
+d) 255.255.255.255
 
 ---
 
-**Q7.** 127.0.0.1 is:
-A. Default gateway  B. Broadcast  **C. Loopback (localhost) ✅**  D. Network address
+**Q7.** DNS resolves:
+
+a) MAC to IP  
+**b) Domain name to IP ✅**  
+c) IP to MAC  
+d) Port to IP
 
 ---
 
-**Q8.** Full mesh with n devices needs how many connections?
-A. n  B. n²  **C. n(n-1)/2 ✅**  D. 2n
+**Q8.** Which is connectionless?
+
+a) TCP  
+**b) UDP ✅**  
+c) HTTP  
+d) FTP
 
 ---
 
-**Q9.** TCP uses 3-way handshake:
-**A. SYN → SYN-ACK → ACK ✅**  B. ACK → SYN → FIN  C. FIN → ACK → SYN  D. SYN → ACK → FIN
+**Q9.** How many OSI layers?
+
+a) 4  
+b) 5  
+**c) 7 ✅**  
+d) 6
 
 ---
 
-**Q10.** SMTP is used for:
-**A. Sending email ✅**  B. Receiving email  C. Web browsing  D. File transfer
+**Q10.** Router operates at which layer?
+
+a) Layer 1  
+b) Layer 2  
+**c) Layer 3 ✅**  
+d) Layer 4
 
 ---
 
-**Q11.** Highest bandwidth cable?
-A. Twisted Pair  B. Coaxial  **C. Fiber Optic ✅**  D. Radio
+**Q11.** Full mesh with n devices needs:
+
+a) n  
+b) n²  
+**c) n(n-1)/2 ✅**  
+d) 2n
 
 ---
 
-**Q12.** ARP resolves:
-A. Domain to IP  **B. IP to MAC ✅**  C. MAC to IP  D. Port to MAC
+**Q12.** TCP 3-way handshake:
+
+**a) SYN → SYN-ACK → ACK ✅**  
+b) ACK → SYN → FIN  
+c) FIN → ACK → SYN  
+d) SYN → ACK → FIN
 
 ---
 
-**Q13.** In /26 subnet, usable hosts?
-A. 64  **B. 62 ✅**  C. 30  D. 126
+**Q13.** SMTP is used for:
+
+**a) Sending email ✅**  
+b) Receiving email  
+c) Web browsing  
+d) File transfer
 
 ---
 
-**Q14.** IMAP differs from POP3 because:
-A. IMAP deletes emails  **B. IMAP keeps emails on server and syncs ✅**  C. Same  D. IMAP is faster
+**Q14.** Highest bandwidth cable:
+
+a) Twisted Pair  
+b) Coaxial  
+**c) Fiber Optic ✅**  
+d) Radio
 
 ---
 
-**Q15.** DHCP server port?
-A. 80  **B. 67 ✅**  C. 53  D. 443
+**Q15.** ARP resolves:
+
+a) Domain to IP  
+**b) IP to MAC ✅**  
+c) MAC to IP  
+d) Port to MAC
 
 ---
 
-**Q16.** Multicast IP class?
-A. Class A  B. Class C  **C. Class D ✅**  D. Class E
+**Q16.** In /26 subnet, usable hosts?
+
+a) 64  
+**b) 62 ✅**  
+c) 30  
+d) 126
 
 ---
 
-**Q17.** Which is a private IP?
-A. 8.8.8.8  **B. 192.168.1.1 ✅**  C. 172.32.0.1  D. 11.0.0.1
+**Q17.** IMAP vs POP3 — IMAP:
+
+a) Deletes emails from server  
+**b) Keeps emails on server and syncs ✅**  
+c) Same as POP3  
+d) Faster than POP3
 
 ---
 
-**Q18.** Switch sends data to:
-A. All ports  **B. Specific port using MAC ✅**  C. Random port  D. Nearest port
+**Q18.** DHCP server port?
+
+a) 80  
+**b) 67 ✅**  
+c) 53  
+d) 443
 
 ---
 
-**Q19.** TCP header size?
-**A. 20 bytes ✅**  B. 8 bytes  C. 32 bytes  D. 16 bytes
+**Q19.** Multicast IP class?
+
+a) Class A  
+b) Class C  
+**c) Class D ✅**  
+d) Class E
 
 ---
 
-**Q20.** RIP max hop count?
-**A. 15 ✅**  B. 16  C. 255  D. 30
+**Q20.** Which is a private IP?
+
+a) 8.8.8.8  
+**b) 192.168.1.1 ✅**  
+c) 172.32.0.1  
+d) 11.0.0.1
 
 ---
 
-**Q21.** Which protocol is used by the `ping` command?
-A. TCP  B. UDP  **C. ICMP ✅**  D. ARP
+**Q21.** Switch sends data to:
+
+a) All ports  
+**b) Specific port using MAC address ✅**  
+c) Random port  
+d) Nearest port
 
 ---
 
-**Q22.** FTP data transfer uses port:
-**A. 20 ✅**  B. 21  C. 22  D. 25
+**Q22.** TCP header size:
+
+**a) 20 bytes ✅**  
+b) 8 bytes  
+c) 32 bytes  
+d) 16 bytes
 
 ---
 
-**Q23.** FTP control connection uses port:
-A. 20  **B. 21 ✅**  C. 22  D. 80
+**Q23.** RIP max hop count:
+
+**a) 15 ✅**  
+b) 16  
+c) 255  
+d) 30
 
 ---
 
-**Q24.** Which layer adds MAC address to data?
-A. Network  **B. Data Link ✅**  C. Transport  D. Physical
+**Q24.** `ping` command uses:
+
+a) TCP  
+b) UDP  
+**c) ICMP ✅**  
+d) ARP
 
 ---
 
-**Q25.** Hub operates at which OSI layer?
-**A. Physical (Layer 1) ✅**  B. Data Link  C. Network  D. Transport
+**Q25.** FTP data port:
+
+**a) 20 ✅**  
+b) 21  
+c) 22  
+d) 25
 
 ---
 
-**Q26.** SSH port number?
-**A. 22 ✅**  B. 23  C. 25  D. 80
+**Q26.** FTP control port:
+
+a) 20  
+**b) 21 ✅**  
+c) 22  
+d) 80
 
 ---
 
-**Q27.** Telnet is insecure because:
-A. It uses UDP  **B. Data is sent in plaintext (unencrypted) ✅**  C. It is slow  D. It uses wrong port
+**Q27.** Data Link layer adds:
+
+a) IP address  
+**b) MAC address ✅**  
+c) Port number  
+d) Domain name
 
 ---
 
-**Q28.** How many layers in TCP/IP model?
-A. 3  **B. 4 ✅**  C. 5  D. 7
+**Q28.** Hub operates at:
+
+**a) Physical (Layer 1) ✅**  
+b) Data Link  
+c) Network  
+d) Transport
 
 ---
 
-**Q29.** Which protocol auto-assigns IP addresses?
-A. DNS  B. ARP  **C. DHCP ✅**  D. HTTP
+**Q29.** SSH port:
+
+**a) 22 ✅**  
+b) 23  
+c) 25  
+d) 80
 
 ---
 
-**Q30.** Which topology has a single backbone cable?
-**A. Bus ✅**  B. Star  C. Ring  D. Mesh
+**Q30.** Telnet is insecure because:
+
+a) Uses UDP  
+**b) Data sent in plaintext ✅**  
+c) Slow  
+d) Wrong port
 
 ---
 
-**Q31.** In Star topology, if the central hub fails:
-A. Only one node goes down  B. Network slows down  **C. Entire network goes down ✅**  D. Nothing happens
+**Q31.** How many TCP/IP layers?
+
+a) 3  
+**b) 4 ✅**  
+c) 5  
+d) 7
 
 ---
 
-**Q32.** Transport layer protocol that provides reliable delivery:
-**A. TCP ✅**  B. UDP  C. IP  D. ICMP
+**Q32.** DHCP auto-assigns:
+
+a) MAC addresses  
+**b) IP addresses ✅**  
+c) Domain names  
+d) Ports
 
 ---
 
-**Q33.** Presentation layer handles:
-A. Routing  **B. Encryption and data format translation ✅**  C. Error detection  D. Session management
+**Q33.** Star topology: if hub fails:
+
+a) One node down  
+**b) Entire network down ✅**  
+c) Network slows  
+d) Nothing
 
 ---
 
-**Q34.** Session layer is responsible for:
-A. Routing  B. Encryption  **C. Establishing, managing, and terminating sessions ✅**  D. Physical transmission
+**Q34.** IPv4 is __ bits; IPv6 is __ bits:
+
+a) 16, 64  
+**b) 32, 128 ✅**  
+c) 64, 128  
+d) 32, 256
 
 ---
 
-**Q35.** IPv4 address is how many bits?
-A. 16  **B. 32 ✅**  C. 64  D. 128
+**Q35.** 255.255.255.255 is:
+
+a) Loopback  
+**b) Broadcast address ✅**  
+c) Default gateway  
+d) Network address
 
 ---
 
-**Q36.** IPv6 address is how many bits?
-A. 32  B. 64  **C. 128 ✅**  D. 256
+**Q36.** HTTPS uses port:
+
+a) 80  
+**b) 443 ✅**  
+c) 8080  
+d) 22
 
 ---
 
-**Q37.** 255.255.255.255 is:
-A. Loopback  **B. Broadcast address ✅**  C. Default gateway  D. Network address
+**Q37.** BGP is used:
+
+a) Within a LAN  
+**b) Between autonomous systems (Internet backbone) ✅**  
+c) For DNS  
+d) For email
 
 ---
 
-**Q38.** HTTPS uses which port?
-A. 80  **B. 443 ✅**  C. 8080  D. 22
+**Q38.** OSPF is what type?
+
+a) Distance Vector  
+**b) Link State ✅**  
+c) Path Vector  
+d) Hybrid
 
 ---
 
-**Q39.** Which routing protocol is used between autonomous systems on the Internet?
-A. RIP  B. OSPF  **C. BGP ✅**  D. EIGRP
+**Q39.** Data unit at Transport layer:
+
+a) Packet  
+b) Frame  
+**c) Segment ✅**  
+d) Bits
 
 ---
 
-**Q40.** OSPF is what type of routing protocol?
-A. Distance Vector  **B. Link State ✅**  C. Path Vector  D. Hybrid
+**Q40.** Data unit at Network layer:
+
+a) Frame  
+**b) Packet ✅**  
+c) Segment  
+d) Data
 
 ---
 
-**Q41.** Data unit at the Transport layer is called:
-A. Packet  B. Frame  **C. Segment ✅**  D. Bits
+**Q41.** Data unit at Data Link layer:
+
+**a) Frame ✅**  
+b) Packet  
+c) Segment  
+d) Bits
 
 ---
 
-**Q42.** Data unit at the Network layer is called:
-A. Frame  **B. Packet ✅**  C. Segment  D. Data
+**Q42.** Gateway connects different:
+
+a) Cables  
+**b) Network protocols ✅**  
+c) Switches  
+d) Hubs
 
 ---
 
-**Q43.** Data unit at Data Link layer is called:
-**A. Frame ✅**  B. Packet  C. Segment  D. Bits
+**Q43.** /28 subnet usable hosts:
+
+a) 16  
+**b) 14 ✅**  
+c) 30  
+d) 8
 
 ---
 
-**Q44.** Which device connects two different network protocols?
-A. Router  B. Switch  **C. Gateway ✅**  D. Bridge
+**Q44.** Class A range starts from:
+
+**a) 1.0.0.0 ✅**  
+b) 128.0.0.0  
+c) 192.0.0.0  
+d) 0.0.0.0
 
 ---
 
-**Q45.** A /28 subnet has how many usable hosts?
-A. 16  **B. 14 ✅**  C. 30  D. 8
+**Q45.** ICMP provides:
 
-> /28 = 32-28 = 4 host bits → 2⁴ - 2 = 14
-
----
-
-**Q46.** Class A IP range starts from:
-**A. 1.0.0.0 ✅**  B. 128.0.0.0  C. 192.0.0.0  D. 224.0.0.0
+a) Routing  
+**b) Error reporting ✅**  
+c) File transfer  
+d) Email
 
 ---
 
-**Q47.** Which protocol provides error reporting in networks?
-A. TCP  B. ARP  **C. ICMP ✅**  D. DNS
+**Q46.** UDP header size:
+
+a) 20 bytes  
+**b) 8 bytes ✅**  
+c) 16 bytes  
+d) 32 bytes
 
 ---
 
-**Q48.** UDP header size?
-A. 20 bytes  **B. 8 bytes ✅**  C. 16 bytes  D. 32 bytes
+**Q47.** Repeater does:
+
+**a) Regenerates/amplifies weak signals ✅**  
+b) Routes packets  
+c) Switches frames  
+d) Translates protocols
 
 ---
 
-**Q49.** Which device regenerates and amplifies weak signals?
-**A. Repeater ✅**  B. Router  C. Switch  D. Gateway
+**Q48.** DNS primarily uses:
+
+a) TCP only  
+**b) UDP (queries), TCP (zone transfers) ✅**  
+c) ICMP  
+d) ARP
 
 ---
 
-**Q50.** DNS uses which transport protocol?
-A. TCP only  **B. UDP (primarily), TCP for zone transfers ✅**  C. ICMP  D. ARP
+**Q49.** Determine max cable length (km) for Ethernet LAN: data rate 500 Mbps, frame size 10,000 bits, signal speed 2,00,000 km/s:
+
+a) 1  
+**b) 2 ✅**  
+c) 2.5  
+d) 5
 
 ---
 
-## Scenario & One-Line Answer Questions
+**Q50.** Which environment variable sets the Java path?
+
+a) MAVEN_Path  
+b) JavaPATH  
+c) JAVA  
+**d) JAVA_HOME ✅**
 
 ---
 
-**S1.** A user types www.google.com in the browser. Which protocol converts this to an IP address?
-> **DNS** (Domain Name System) resolves the domain name to an IP address.
+## Scenario / One-Line Answers
 
-**S2.** You want to send a file from one computer to another. Which protocol would you use?
-> **FTP** (File Transfer Protocol) on ports 20 (data) and 21 (control).
-
-**S3.** An email is stuck in the outbox. Which protocol is likely failing?
-> **SMTP** (port 25) — used for sending outgoing emails.
-
-**S4.** You check emails on your phone and laptop and see the same emails on both. Which protocol is being used?
-> **IMAP** (port 143) — keeps emails on the server and syncs across multiple devices.
-
-**S5.** A new device joins a network and automatically gets an IP address. Which protocol assigned it?
-> **DHCP** (Dynamic Host Configuration Protocol) automatically assigns IP addresses.
-
-**S6.** You run `ping 192.168.1.1` and get a reply. Which protocol is being used?
-> **ICMP** (Internet Control Message Protocol) — used by the ping utility.
-
-**S7.** A network has 10 devices in full mesh topology. How many connections are needed?
-> **n(n-1)/2 = 10(9)/2 = 45 connections**.
-
-**S8.** What is the difference between a hub and a switch?
-> A **hub** broadcasts data to ALL ports (Layer 1). A **switch** sends data only to the SPECIFIC destination port using MAC address table (Layer 2).
-
-**S9.** You have a /27 subnet. How many usable hosts?
-> 32 - 27 = 5 host bits → 2⁵ - 2 = **30 usable hosts**.
-
-**S10.** Why is Telnet considered insecure?
-> Telnet transmits data (including passwords) in **plaintext** without encryption. SSH is the secure alternative.
-
-**S11.** What is the difference between TCP and UDP in one line?
-> TCP is **reliable and connection-oriented** (guarantees delivery); UDP is **fast and connectionless** (no guarantees).
-
-**S12.** What is NAT (Network Address Translation)?
-> NAT translates **private IP addresses to a public IP** address, allowing multiple devices on a LAN to share a single public IP for Internet access.
-
-**S13.** What is the subnet mask for a /24 network?
-> **255.255.255.0** — 24 bits for network, 8 bits for host.
-
-**S14.** What does ARP do in one line?
-> ARP maps a known **IP address to its corresponding MAC address** on a local network.
-
-**S15.** What is the purpose of a default gateway?
-> The **default gateway** is the router that a device sends packets to when the destination is **outside the local network**.
+**S1.** Token ring 1-bit delay = distance / propagation speed. Calculate distance for given speed.  
+**S2.** Class C has 21 bits for network portion → 2^21 networks possible.  
+**S3.** 127.0.0.1 is loopback — can be both source and destination (used for self-testing).  
+**S4.** Multimedia uses UDP (speed > reliability); FTP uses TCP; DNS uses UDP; Email uses TCP.  
+**S5.** Ethernet max cable length = (signal speed × frame transmission time) / 2.  
+**S6.** NAT translates private IPs to a public IP for internet access.  
+**S7.** Subnet hosts = 2^(host bits) - 2. The -2 is for network address and broadcast address.
 
 ---

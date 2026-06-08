@@ -4,22 +4,19 @@
 
 ## 1.1 Foundations of Operating Systems
 
-**Operating System (OS):** System software that manages hardware and software resources and acts as an intermediary between the user and hardware.
-
-### Functions:
-- Process Management, Memory Management, File System Management, I/O Management, Security, Networking
+**Operating System (OS):** System software that acts as an intermediary between the user and hardware, managing resources.
 
 ### Components:
 | Component | Role |
 |---|---|
-| **Kernel** | Core of OS; manages hardware, memory, processes in privileged mode |
-| **Shell** | User interface — CLI (bash, cmd) or GUI |
-| **System Calls** | API for programs to request kernel services (`fork()`, `exec()`, `open()`, `read()`, `write()`) |
+| **Kernel** | Core; manages hardware, memory, processes in privileged mode |
+| **Shell** | User interface — CLI (bash) or GUI |
+| **System Calls** | API for programs to request kernel services (`fork()`, `exec()`, `open()`, `read()`, `write()`, `wait()`, `exit()`) |
 
 ### Kernel Types:
 | Type | Description | Example |
 |---|---|---|
-| **Monolithic** | All services in kernel space; fast but less modular | Linux, Unix |
+| **Monolithic** | All services in kernel space; fast | Linux, Unix |
 | **Microkernel** | Minimal kernel; most services in user space | Minix, QNX |
 | **Hybrid** | Combines both | Windows NT, macOS |
 
@@ -27,23 +24,23 @@
 
 ## 1.2 Types of Operating Systems
 
-| Type | Description | Example |
+| Type | Key Feature | Example |
 |---|---|---|
-| **Batch OS** | Jobs collected and executed without user interaction | Early IBM |
-| **Time-Sharing** | CPU time shared using time slices | Unix |
+| **Batch OS** | Jobs in batches, no interaction | Early IBM |
+| **Time-Sharing** | CPU shared using time slices | Unix |
 | **Real-Time (RTOS)** | Strict time deadlines | VxWorks |
-| **Distributed** | Multiple machines act as one system | LOCUS |
-| **Multiprogramming** | Multiple programs in memory; CPU switches on I/O wait | Mainframes |
-| **Multiprocessing** | Multiple CPUs execute processes in parallel | Modern Linux |
+| **Distributed** | Multiple machines as one system | LOCUS |
+| **Multiprogramming** | Multiple programs in memory | Mainframes |
+| **Multiprocessing** | Multiple CPUs | Modern Linux |
 
-**Hard Real-Time** — Missing deadline = total failure (pacemaker)  
+**Hard Real-Time** — Missing deadline = failure (pacemaker)  
 **Soft Real-Time** — Missing deadline = degraded performance (video streaming)
 
 ---
 
 ## 1.3 Memory Management
 
-### Memory Hierarchy: Registers → Cache → RAM → SSD/HDD
+### Memory Hierarchy: Registers → Cache (L1→L2→L3) → RAM → SSD/HDD
 
 ### Placement Algorithms:
 | Algorithm | Description |
@@ -55,23 +52,27 @@
 ### Paging:
 - Physical memory → **Frames**, Logical memory → **Pages** (same fixed size)
 - **Page Table** maps pages to frames
-- Eliminates external fragmentation, may cause internal fragmentation
-
-### Segmentation:
-- Variable-size segments (code, data, stack)
-- Can cause external fragmentation
+- Eliminates external fragmentation; may cause internal fragmentation
+- Logical Address = Page Number + Page Offset
 
 ### Virtual Memory & Page Replacement:
 | Algorithm | Description |
 |---|---|
-| **FIFO** | Replace oldest page |
+| **FIFO** | Replace oldest page (suffers **Belady's Anomaly**) |
 | **LRU** | Replace least recently used page |
-| **Optimal** | Replace page not needed for longest time (theoretical) |
+| **Optimal** | Replace page not needed for longest time (theoretical, not implementable) |
 
-**Thrashing** — More time paging than executing  
-**Belady's Anomaly** — FIFO: more frames can mean more page faults  
-**Internal Fragmentation** — Waste inside allocated block (paging)  
-**External Fragmentation** — Waste between blocks (segmentation)
+### Key Concepts:
+- **Thrashing** — Process spends more time paging than executing
+- **Belady's Anomaly** — In FIFO only: more frames → more page faults (paradox)
+- **Internal Fragmentation** — Waste INSIDE allocated block (paging)
+- **External Fragmentation** — Waste BETWEEN allocated blocks (segmentation)
+- **Increasing RAM improves performance because fewer page faults occur**
+
+### Context Switch:
+- Saves/restores process state (PCB): program counter, registers, memory maps
+- **General purpose registers** need to be saved during context switch
+- **Translation look-aside buffer (TLB)** does NOT need to be saved (it's flushed)
 
 ---
 
@@ -79,18 +80,21 @@
 
 ### Formulas:
 ```
-Turnaround Time = Completion Time - Arrival Time
-Waiting Time = Turnaround Time - Burst Time
+Turnaround Time (TAT) = Completion Time - Arrival Time
+Waiting Time (WT) = Turnaround Time - Burst Time
+Response Time = First CPU Time - Arrival Time
 ```
 
-| Algorithm | Type | Key Feature |
+| Algorithm | Type | Key Point |
 |---|---|---|
-| **FCFS** | Non-Preemptive | Convoy Effect |
-| **SJF** | Non-Preemptive | Minimum avg waiting time; can cause starvation |
-| **SRTF** | Preemptive | Preemptive SJF |
-| **Round Robin** | Preemptive | Time quantum; best for time-sharing |
-| **Priority** | Both | Starvation solved by Aging |
-| **Multilevel Feedback Queue** | Preemptive | Most flexible |
+| **FCFS** | Non-Preemptive | Simple; causes **Convoy Effect** |
+| **SJF** | Non-Preemptive | Min avg waiting time; causes **starvation** |
+| **SRTF** | Preemptive | Preemptive SJF; also causes starvation |
+| **Round Robin** | Preemptive | Time quantum; best for time-sharing; no starvation |
+| **Priority** | Both | Starvation solved by **Aging** |
+| **Multilevel Feedback Queue** | Preemptive | Most flexible algorithm |
+
+> **SJF / Shortest Job Next can lead to starvation** of longer processes.
 
 ---
 
@@ -98,334 +102,484 @@ Waiting Time = Turnaround Time - Burst Time
 
 ### Process States: New → Ready → Running → Waiting → Terminated
 
-### Process vs Thread:
-| Feature | Process | Thread |
-|---|---|---|
-| Memory | Separate | Shared |
-| Overhead | High | Low |
-| Crash | Independent | Affects whole process |
+### Deadlock — 4 Necessary Conditions (ALL must hold):
+1. **Mutual Exclusion** — Resources cannot be shared (claims **exclusive control**)
+2. **Hold and Wait** — Process holds resources while waiting for others
+3. **No Preemption** — Resources cannot be forcibly taken
+4. **Circular Wait** — Circular chain of waiting processes
 
-### Critical Section Requirements: Mutual Exclusion, Progress, Bounded Waiting
+**Banker's Algorithm** — Deadlock avoidance (checks safe state)
 
-### Synchronization: Mutex (binary lock), Semaphore (counting), Monitor
+### Synchronization:
+- **Mutex** — Binary lock (only one thread at a time)
+- **Semaphore** — Integer counter for signaling (Binary = mutex, Counting = N resources)
+- **Monitor** — High-level construct with automatic mutual exclusion
 
-### Deadlock Conditions (all 4 needed):
-1. Mutual Exclusion  2. Hold and Wait  3. No Preemption  4. Circular Wait
-
-**Banker's Algorithm** — Deadlock avoidance (check safe state)  
-**Aging** — Solves starvation  
-
-### IPC Methods: Pipes, Named Pipes, Message Queues, Shared Memory (fastest), Sockets, Signals
+### IPC Methods: Pipes, Named Pipes, Message Queues, **Shared Memory (fastest)**, Sockets, Signals
 
 ---
 
-## MCQ Practice Questions (50+)
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-**Q1.** Which component of the OS directly interacts with hardware?
-A. Shell  B. System Call  **C. Kernel ✅**  D. User Interface
+**Q1.** Which page replacement algorithm suffers from Belady's anomaly?
+
+a) FIFO ← **✅**  
+b) LRU  
+c) Optimal Page Replacement  
+d) Both LRU and FIFO
 
 ---
 
-**Q2.** Which scheduling algorithm causes Convoy Effect?
-**A. FCFS ✅**  B. SJF  C. Round Robin  D. Priority
+**Q2.** Increasing the RAM of a computer typically improves performance because:
+
+a) Virtual memory increases  
+b) Larger RAMs are faster  
+**c) Fewer page faults occur ✅**  
+d) Fewer segmentation faults occur
 
 ---
 
-**Q3.** Belady's Anomaly occurs in which page replacement algorithm?
-**A. FIFO ✅**  B. LRU  C. Optimal  D. LFU
+**Q3.** Which process scheduling algorithm may lead to starvation?
+
+a) FIFO  
+b) Round Robin  
+**c) Shortest Job Next ✅**  
+d) None of the above
 
 ---
 
-**Q4.** Which algorithm gives minimum average waiting time?
-A. FCFS  **B. SJF ✅**  C. Round Robin  D. Priority
+**Q4.** In which of the four deadlock conditions do processes claim exclusive control of resources?
+
+a) No pre-emption  
+**b) Mutual exclusion ✅**  
+c) Circular wait  
+d) Hold and wait
 
 ---
 
-**Q5.** Which is NOT a necessary condition for deadlock?
-A. Mutual Exclusion  B. Hold and Wait  C. Circular Wait  **D. Preemption ✅**
+**Q5.** Which need NOT necessarily be saved during a context switch?
 
-> The condition is "No Preemption", not "Preemption."
-
----
-
-**Q6.** What is thrashing?
-A. Running too many programs  B. A disk scheduling algorithm  **C. Process spends more time paging than executing ✅**  D. Memory leak
+a) General purpose registers  
+**b) Translation look-aside buffer ✅**  
+c) Program counter  
+d) All of the above
 
 ---
 
-**Q7.** In Round Robin, when time quantum expires, the process:
-A. Terminates  B. Goes to waiting  **C. Moves to back of ready queue ✅**  D. Gets higher priority
+**Q6.** Which scheduling algorithm causes the Convoy Effect?
+
+**a) FCFS ✅**  
+b) SJF  
+c) Round Robin  
+d) Priority
 
 ---
 
-**Q8.** Which fragmentation occurs in paging?
-A. External  **B. Internal ✅**  C. Both  D. Neither
+**Q7.** Which scheduling algorithm gives minimum average waiting time?
+
+a) FCFS  
+**b) SJF ✅**  
+c) Round Robin  
+d) FCFS
 
 ---
 
-**Q9.** Fastest IPC mechanism?
-A. Pipes  B. Message Queues  **C. Shared Memory ✅**  D. Sockets
+**Q8.** In Round Robin, when time quantum expires, the process:
+
+a) Terminates  
+b) Goes to waiting  
+**c) Moves to back of ready queue ✅**  
+d) Gets higher priority
 
 ---
 
-**Q10.** A semaphore initialized to 1 is equivalent to:
-**A. Mutex ✅**  B. Counting Semaphore  C. Monitor  D. Spinlock
+**Q9.** Which fragmentation occurs in paging?
+
+a) External  
+**b) Internal ✅**  
+c) Both  
+d) Neither
 
 ---
 
-**Q11.** Banker's Algorithm is used for deadlock:
-A. Detection  **B. Avoidance ✅**  C. Prevention  D. Recovery
+**Q10.** Fastest IPC mechanism?
+
+a) Pipes  
+b) Message Queues  
+**c) Shared Memory ✅**  
+d) Sockets
 
 ---
 
-**Q12.** Paging divides physical memory into:
-A. Segments  **B. Frames ✅**  C. Blocks  D. Sectors
+**Q11.** A semaphore initialized to 1 is equivalent to:
+
+**a) Mutex ✅**  
+b) Counting Semaphore  
+c) Monitor  
+d) Spinlock
 
 ---
 
-**Q13.** Starvation in priority scheduling is solved by:
-A. Increasing quantum  **B. Aging ✅**  C. Using FCFS  D. More CPUs
+**Q12.** Banker's Algorithm is used for deadlock:
+
+a) Detection  
+**b) Avoidance ✅**  
+c) Prevention  
+d) Recovery
 
 ---
 
-**Q14.** Which is a preemptive scheduling algorithm?
-A. FCFS  B. SJF  **C. SRTF ✅**  D. None
+**Q13.** Paging divides physical memory into:
+
+a) Segments  
+**b) Frames ✅**  
+c) Blocks  
+d) Sectors
+
+---
+
+**Q14.** Starvation in priority scheduling is solved by:
+
+a) Increasing quantum  
+**b) Aging ✅**  
+c) Using FCFS  
+d) More CPUs
 
 ---
 
 **Q15.** A page fault occurs when:
-A. Hardware error  B. Page table error  **C. Referenced page not in main memory ✅**  D. Config error
+
+a) Hardware error  
+b) Page table error  
+**c) Referenced page not in main memory ✅**  
+d) Configuration error
 
 ---
 
-**Q16.** All OS services run in kernel space in:
-**A. Monolithic Kernel ✅**  B. Microkernel  C. Hybrid  D. Exokernel
+**Q16.** All OS services in kernel space → which kernel?
+
+**a) Monolithic ✅**  
+b) Microkernel  
+c) Hybrid  
+d) Exokernel
 
 ---
 
 **Q17.** Critical section problem requires all EXCEPT:
-A. Mutual Exclusion  B. Progress  C. Bounded Waiting  **D. Starvation ✅**
+
+a) Mutual Exclusion  
+b) Progress  
+c) Bounded Waiting  
+**d) Starvation ✅**
 
 ---
 
 **Q18.** Best Fit allocates:
-A. First hole big enough  **B. Smallest hole big enough ✅**  C. Largest hole  D. Random hole
+
+a) First hole  
+**b) Smallest hole big enough ✅**  
+c) Largest hole  
+d) Random
 
 ---
 
 **Q19.** Turnaround Time = ?
-A. Burst - Arrival  **B. Completion Time - Arrival Time ✅**  C. Waiting + Arrival  D. Completion - Burst
+
+a) Burst - Arrival  
+**b) Completion Time - Arrival Time ✅**  
+c) Waiting + Arrival  
+d) Completion - Burst
 
 ---
 
-**Q20.** Producer-Consumer uses:
-A. Mutex only  **B. Semaphores (mutex + empty + full) ✅**  C. Signals  D. Pipes
+**Q20.** Which OS guarantees strict time deadlines?
+
+a) Batch OS  
+b) Time-sharing  
+**c) Real-Time OS ✅**  
+d) Network OS
 
 ---
 
-**Q21.** Which OS type guarantees response within strict time deadlines?
-A. Batch OS  B. Time-sharing  **C. Real-Time OS ✅**  D. Network OS
+**Q21.** `fork()` creates a:
+
+a) Thread  
+**b) Child process ✅**  
+c) File  
+d) Semaphore
 
 ---
 
-**Q22.** `fork()` system call creates a:
-A. Thread  **B. Child process ✅**  C. File  D. Semaphore
+**Q22.** Process waiting for I/O is in which state?
+
+a) Ready  
+b) Running  
+**c) Waiting/Blocked ✅**  
+d) Terminated
 
 ---
 
-**Q23.** In which state is a process waiting for I/O?
-A. Ready  B. Running  **C. Waiting/Blocked ✅**  D. Terminated
+**Q23.** Which page replacement is theoretically best but not implementable?
+
+a) FIFO  
+b) LRU  
+**c) Optimal ✅**  
+d) LFU
 
 ---
 
-**Q24.** Which scheduling is best for time-sharing systems?
-A. FCFS  B. SJF  **C. Round Robin ✅**  D. Priority
+**Q24.** In a multiprogramming system, when one process waits for I/O:
+
+a) CPU waits  
+**b) CPU switches to another process ✅**  
+c) System shuts down  
+d) CPU restarts
 
 ---
 
-**Q25.** Context switching involves saving and restoring:
-A. Files  **B. Process state (PCB) ✅**  C. Disk data  D. Network connections
+**Q25.** Semaphore wait(S) operation is also called:
+
+a) V(S)  
+b) signal(S)  
+**c) P(S) ✅**  
+d) release(S)
 
 ---
 
-**Q26.** The PCB (Process Control Block) contains:
-A. Only process ID  B. Only program counter  **C. Process ID, state, program counter, registers, memory info ✅**  D. Only memory info
+**Q26.** Which deadlock handling ignores the problem?
+
+a) Prevention  
+b) Avoidance  
+c) Detection  
+**d) Ostrich Algorithm ✅**
 
 ---
 
-**Q27.** Which page replacement is theoretically the best but not implementable?
-A. FIFO  B. LRU  **C. Optimal (OPT) ✅**  D. LFU
+**Q27.** A process that finished but parent hasn't called wait() is:
+
+a) Orphan  
+**b) Zombie ✅**  
+c) Daemon  
+d) Blocked
 
 ---
 
-**Q28.** In a multiprogramming system, when one process waits for I/O, the CPU:
-A. Waits idle  **B. Switches to another process ✅**  C. Shuts down  D. Restarts
+**Q28.** A process whose parent terminated is:
+
+**a) Orphan ✅**  
+b) Zombie  
+c) Daemon  
+d) Init
 
 ---
 
-**Q29.** Mutual Exclusion means:
-**A. Only one process in critical section at a time ✅**  B. All processes execute together  C. No process can enter  D. Processes share memory freely
+**Q29.** Thread is also called a:
+
+**a) Lightweight process ✅**  
+b) Heavy process  
+c) Kernel module  
+d) Daemon
 
 ---
 
-**Q30.** Semaphore `wait(S)` operation is also called:
-A. V(S)  B. signal(S)  **C. P(S) ✅**  D. release(S)
+**Q30.** If Round Robin quantum = ∞, it behaves like:
+
+**a) FCFS ✅**  
+b) SJF  
+c) Priority  
+d) SRTF
 
 ---
 
-**Q31.** Which deadlock handling strategy ignores the problem entirely?
-A. Prevention  B. Avoidance  C. Detection  **D. Ostrich Algorithm ✅**
+**Q31.** If Round Robin quantum is very small:
+
+a) Throughput increases  
+**b) Too many context switches, overhead increases ✅**  
+c) Performance improves  
+d) No effect
 
 ---
 
-**Q32.** Worst Fit algorithm allocates:
-A. Smallest hole  **B. Largest hole ✅**  C. First hole  D. Last hole
+**Q32.** Dining Philosophers problem involves:
+
+a) 3 philosophers  
+**b) 5 philosophers and 5 forks ✅**  
+c) 10 philosophers  
+d) 2 philosophers
 
 ---
 
-**Q33.** A process that has finished execution is in the:
-A. Ready state  B. Blocked state  **C. Terminated state ✅**  D. New state
+**Q33.** Which classic problem has a bounded buffer?
+
+**a) Producer-Consumer ✅**  
+b) Reader-Writer  
+c) Dining Philosophers  
+d) Sleeping Barber
 
 ---
 
-**Q34.** Which classic synchronization problem involves 5 philosophers and 5 forks?
-A. Producer-Consumer  B. Reader-Writer  **C. Dining Philosophers ✅**  D. Sleeping Barber
+**Q34.** External fragmentation is solved by:
+
+a) Paging only  
+b) Compaction only  
+**c) Both Paging and Compaction ✅**  
+d) Neither
 
 ---
 
-**Q35.** Logical memory is divided into pages; physical memory is divided into:
-A. Segments  **B. Frames ✅**  C. Clusters  D. Tracks
+**Q35.** Demand paging loads a page into memory:
+
+a) At program start  
+**b) Only when it is needed (on page fault) ✅**  
+c) At boot time  
+d) Randomly
 
 ---
 
-**Q36.** Which system call is used to execute a new program in Unix?
-A. fork()  **B. exec() ✅**  C. wait()  D. exit()
+**Q36.** User-level threads are managed by:
+
+a) Kernel  
+**b) User-level library ✅**  
+c) Hardware  
+d) Shell
 
 ---
 
-**Q37.** In a time-sharing OS, the CPU switches between processes using:
-A. Interrupts only  **B. Time quantum/time slice ✅**  C. Priority only  D. Random selection
+**Q37.** PCB (Process Control Block) contains:
+
+a) Only PID  
+b) Only program counter  
+**c) PID, state, program counter, registers, memory info ✅**  
+d) Only memory
 
 ---
 
-**Q38.** What does SRTF stand for?
-A. Shortest Run Time First  **B. Shortest Remaining Time First ✅**  C. Shortest Response Time First  D. Simple Round Time First
+**Q38.** The Multilevel Feedback Queue is the most _____ scheduling algorithm:
+
+a) Simple  
+**b) Flexible ✅**  
+c) Fast  
+d) Outdated
 
 ---
 
-**Q39.** External fragmentation can be solved by:
-A. Paging  B. Compaction  C. Both  **D. Both Paging and Compaction ✅**
+**Q39.** SRTF stands for:
+
+a) Shortest Run Time First  
+**b) Shortest Remaining Time First ✅**  
+c) Shortest Response Time First  
+d) Simple Round Time First
 
 ---
 
-**Q40.** Which IPC method allows communication between processes on different machines?
-A. Pipes  B. Shared Memory  C. Signals  **D. Sockets ✅**
+**Q40.** Which of the following is NOT a process state?
+
+a) Ready  
+b) Running  
+c) Waiting  
+**d) Executing ✅**
 
 ---
 
-**Q41.** Demand paging loads a page into memory:
-A. At program start  B. At boot time  **C. Only when it is needed (on page fault) ✅**  D. Randomly
+**Q41.** In Reader-Writer problem, multiple readers can read simultaneously:
+
+**a) True ✅**  
+b) False
 
 ---
 
-**Q42.** Multilevel Feedback Queue is the most _____ scheduling algorithm:
-A. Simple  B. Fast  **C. Flexible ✅**  D. Outdated
+**Q42.** `wait()` system call is used by a parent to:
+
+a) Create a child  
+**b) Wait for child process to finish ✅**  
+c) Kill a child  
+d) Send data
 
 ---
 
-**Q43.** A thread is also called a:
-**A. Lightweight process ✅**  B. Heavy process  C. Kernel module  D. Device driver
+**Q43.** Virtual memory allows execution of processes:
+
+a) Only smaller than RAM  
+**b) Larger than physical memory ✅**  
+c) Equal to RAM  
+d) Only on SSD
 
 ---
 
-**Q44.** User-level threads are managed by:
-A. Kernel  **B. User-level library ✅**  C. Hardware  D. Shell
+**Q44.** What does thrashing cause?
+
+a) High CPU utilization  
+**b) Low CPU utilization and excessive paging ✅**  
+c) Faster execution  
+d) More free memory
 
 ---
 
-**Q45.** Which of the following is NOT a process state?
-A. Ready  B. Running  C. Waiting  **D. Executing ✅**
+**Q45.** Which of the following uses circular queue internally?
 
-> Standard states: New, Ready, Running, Waiting, Terminated. "Executing" is not a standard term.
-
----
-
-**Q46.** If a large time quantum is used in Round Robin, it behaves like:
-**A. FCFS ✅**  B. SJF  C. Priority  D. SRTF
+a) Stack  
+b) Tree  
+**c) CPU scheduling (Round Robin) ✅**  
+d) Graph
 
 ---
 
-**Q47.** If a very small time quantum is used in Round Robin:
-A. Throughput increases  B. Performance improves  **C. Too many context switches, overhead increases ✅**  D. No effect
+**Q46.** What is the main difference between process and thread?
+
+a) Threads are slower  
+**b) Threads share memory space; processes have separate memory ✅**  
+c) Processes are lighter  
+d) No difference
 
 ---
 
-**Q48.** In the Reader-Writer problem, multiple readers can read simultaneously:
-**A. True ✅**  B. False
+**Q47.** Cache memory is placed between:
 
-> Readers can access shared data concurrently. Writers need exclusive access.
-
----
-
-**Q49.** `wait()` system call is used by a parent process to:
-A. Create a child  **B. Wait for a child process to finish ✅**  C. Kill a child  D. Send data to child
+**a) CPU and RAM ✅**  
+b) RAM and Disk  
+c) CPU and Disk  
+d) I/O and RAM
 
 ---
 
-**Q50.** Which memory technique allows a process larger than physical memory to execute?
-A. Paging  B. Segmentation  **C. Virtual Memory ✅**  D. Caching
+**Q48.** Logical address is generated by:
+
+**a) CPU ✅**  
+b) MMU  
+c) Hard disk  
+d) RAM
 
 ---
 
-## Scenario & One-Line Answer Questions
+**Q49.** Physical address is generated by:
+
+a) CPU  
+**b) MMU (Memory Management Unit) ✅**  
+c) Compiler  
+d) Linker
 
 ---
 
-**S1.** A process with burst time 50ms is waiting behind a process with burst time 500ms in FCFS. What problem is this?
-> **Convoy Effect** — Short processes wait behind a long process in FCFS scheduling.
+**Q50.** Which is NOT a deadlock condition?
 
-**S2.** A system has 5 processes and all are rapidly swapping pages in and out. What is happening?
-> **Thrashing** — The system is spending more time on page swapping than actual process execution due to insufficient frames.
+a) Mutual Exclusion  
+b) Hold and Wait  
+c) No Preemption  
+**d) Preemption ✅**
 
-**S3.** You increase the number of frames allocated to a process using FIFO replacement, but page faults increase. What anomaly is this?
-> **Belady's Anomaly** — In FIFO page replacement, more frames can paradoxically lead to more page faults.
+---
 
-**S4.** Process A holds Resource 1 and waits for Resource 2. Process B holds Resource 2 and waits for Resource 1. What is this?
-> **Deadlock** — Both processes are waiting for resources held by the other, creating a circular wait.
+## Scenario / One-Line Answers
 
-**S5.** A low-priority process never gets CPU time because higher-priority processes keep arriving. What is this?
-> **Starvation** — The process indefinitely waits. Solved by **Aging** (gradually increasing priority over time).
-
-**S6.** What happens when fork() is called?
-> A new **child process** is created that is a copy of the parent. `fork()` returns 0 to the child and the child's PID to the parent.
-
-**S7.** A process needs a page that is not in RAM. What happens?
-> A **Page Fault** occurs. The OS loads the required page from disk into a free frame in RAM.
-
-**S8.** What is the difference between preemptive and non-preemptive scheduling?
-> **Preemptive** — OS can interrupt a running process (Round Robin, SRTF). **Non-preemptive** — process runs until it finishes or blocks (FCFS, SJF).
-
-**S9.** Why is Optimal page replacement not practically implementable?
-> Because it requires **future knowledge** — knowing which pages will be needed next, which is impossible in real systems.
-
-**S10.** In a paging system, a process is 10,000 bytes and page size is 4096 bytes. How many pages?
-> 3 pages (4096 + 4096 + 1808). The last page has **internal fragmentation** of 4096 - 1808 = **2288 bytes** wasted.
-
-**S11.** What is the difference between a process and a thread?
-> A **process** has its own memory space and resources. A **thread** shares the process's memory and resources but has its own stack and program counter. Threads are lightweight; context switching between threads is faster.
-
-**S12.** What is a zombie process?
-> A process that has completed execution but still has an entry in the process table because its parent hasn't called `wait()` to collect its exit status.
-
-**S13.** What is an orphan process?
-> A process whose parent has terminated. In Unix, orphan processes are adopted by the `init` process (PID 1).
-
-**S14.** What is the difference between a mutex and a semaphore?
-> **Mutex** — Binary lock (0 or 1), owned by a thread, only the owner can unlock. **Semaphore** — Integer counter, can be used for signaling between processes, any process can signal.
-
-**S15.** If Round Robin time quantum = ∞, which algorithm does it become?
-> **FCFS (First Come First Serve)** — With infinite quantum, no preemption occurs, and processes run to completion in arrival order.
+**S1.** Increasing RAM → fewer page faults → better performance.  
+**S2.** Belady's Anomaly occurs ONLY in FIFO, not in LRU or Optimal.  
+**S3.** SJF causes starvation; solved by aging.  
+**S4.** Mutual exclusion = process claims exclusive control of resources.  
+**S5.** TLB does NOT need saving during context switch (it's hardware cache, gets flushed).  
+**S6.** Fork() returns 0 to child, child's PID to parent.  
+**S7.** Zombie = finished but parent hasn't collected exit status. Orphan = parent died.  
+**S8.** Thrashing = too many processes, not enough frames → CPU utilization drops.
 
 ---

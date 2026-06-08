@@ -4,462 +4,591 @@
 
 ## 3.1 Introduction
 
-**Database:** Organized collection of structured data stored electronically.  
-**DBMS:** Software that manages databases (create, read, update, delete). Examples: MySQL, Oracle, PostgreSQL, SQL Server.  
-**RDBMS:** Relational DBMS — stores data in tables with rows and columns and supports SQL. Data is related using keys.
+**Database:** Organized collection of structured data.  
+**DBMS:** Software that manages databases. Examples: MySQL, Oracle, PostgreSQL.  
+**RDBMS:** Stores data in tables (relations) with rows and columns, related using keys.
 
-### DBMS vs File System:
-| Feature | File System | DBMS |
-|---|---|---|
-| Redundancy | High | Controlled |
-| Consistency | Low | High |
-| Concurrency | No support | Supported |
-| Security | File-level | Fine-grained |
-| Backup/Recovery | Manual | Automatic |
+> **PYQ: DBMS acts as interface between the user and the software** ✅
 
----
-
-## 3.2 Data Definitions
-
+### Data Definitions:
 | Term | Definition |
 |---|---|
-| **Table (Relation)** | A collection of related data organized in rows and columns |
-| **Field (Attribute/Column)** | A single piece of data; defines the type of data stored |
-| **Record (Tuple/Row)** | A single entry in a table; represents one complete data item |
-| **Schema** | The structure/design of the database (tables, columns, types, constraints) |
-| **Instance** | The actual data in the database at a given point in time |
-| **Domain** | The set of permissible values for an attribute (e.g., age: 0-150) |
-| **Degree** | Number of columns in a table |
-| **Cardinality** | Number of rows in a table |
+| **Table (Relation)** | Rows and columns of related data |
+| **Field (Attribute/Column)** | Single piece of data |
+| **Record (Tuple/Row)** | One complete entry |
+| **Schema** | Structure/design of database |
+| **Instance** | Actual data at a point in time |
+| **Degree** | Number of columns |
+| **Cardinality** | Number of rows |
+
+### Data Redundancy Problem:
+> **PYQ: If data is stored in two places in the db, changing in one spot will cause data inconsistency** ✅
 
 ---
 
-## 3.3 SQL and Data Manipulation
+## 3.2 SQL Categories
 
-### SQL Categories:
+| Category | Commands | Purpose |
+|---|---|---|
+| **DDL** | CREATE, ALTER, DROP, TRUNCATE, RENAME | Define structure |
+| **DML** | SELECT, INSERT, UPDATE, DELETE | Manipulate data |
+| **DCL** | GRANT, REVOKE | Control access |
+| **TCL** | COMMIT, ROLLBACK, SAVEPOINT | Manage transactions |
 
-| Category | Full Form | Commands | Purpose |
-|---|---|---|---|
-| **DDL** | Data Definition Language | CREATE, ALTER, DROP, TRUNCATE, RENAME | Define/modify database structure |
-| **DML** | Data Manipulation Language | SELECT, INSERT, UPDATE, DELETE | Manipulate data |
-| **DCL** | Data Control Language | GRANT, REVOKE | Control access permissions |
-| **TCL** | Transaction Control Language | COMMIT, ROLLBACK, SAVEPOINT | Manage transactions |
-| **DQL** | Data Query Language | SELECT | Query/retrieve data |
-
-### Key SQL Commands:
+### Deleting Values from a Table:
 ```sql
--- DDL
-CREATE TABLE students (id INT PRIMARY KEY, name VARCHAR(50), age INT);
-ALTER TABLE students ADD email VARCHAR(100);
-DROP TABLE students;
-TRUNCATE TABLE students;   -- Deletes all rows, keeps structure
-
--- DML
-INSERT INTO students VALUES (1, 'Amit', 21);
-UPDATE students SET age = 22 WHERE id = 1;
-DELETE FROM students WHERE id = 1;
-SELECT * FROM students WHERE age > 20 ORDER BY name;
-
--- Aggregate Functions
-SELECT COUNT(*), AVG(age), MAX(age), MIN(age), SUM(age) FROM students;
-
--- GROUP BY and HAVING
-SELECT department, COUNT(*) FROM employees GROUP BY department HAVING COUNT(*) > 5;
-
--- JOINS
-SELECT e.name, d.dept_name FROM employees e
-INNER JOIN departments d ON e.dept_id = d.id;
+DELETE FROM teachers;                    -- Deletes all rows (can rollback)
+DELETE FROM teachers WHERE id = 'Null';  -- Deletes specific rows
+TRUNCATE TABLE teachers;                 -- Removes all rows (cannot rollback)
+DROP TABLE teachers;                     -- Removes table entirely
 ```
 
-### Types of Joins:
-| Join | Description |
-|---|---|
-| **INNER JOIN** | Returns matching rows from both tables |
-| **LEFT JOIN** | All rows from left + matching from right (NULL if no match) |
-| **RIGHT JOIN** | All rows from right + matching from left |
-| **FULL OUTER JOIN** | All rows from both tables |
-| **CROSS JOIN** | Cartesian product of both tables |
-| **SELF JOIN** | Table joined with itself |
+> **PYQ: Correct command to delete values in a relation? → DELETE FROM teaches** ✅  
+> "Remove table teaches" = DROP, "Delete from teaches where id='Null'" deletes specific rows
 
 ### DELETE vs TRUNCATE vs DROP:
 | Command | Type | Rows | Structure | Rollback | WHERE |
 |---|---|---|---|---|---|
-| DELETE | DML | Removes specific/all rows | Kept | Yes | Yes |
-| TRUNCATE | DDL | Removes all rows | Kept | No | No |
-| DROP | DDL | Removes all rows | Removed | No | No |
+| DELETE | DML | Specific/all | Kept | ✅ Yes | ✅ Yes |
+| TRUNCATE | DDL | All | Kept | ❌ No | ❌ No |
+| DROP | DDL | All | Removed | ❌ No | ❌ No |
 
 ---
 
-## 3.4 Database Keys
+## 3.3 Database Keys
 
 | Key | Definition |
 |---|---|
-| **Primary Key** | Uniquely identifies each row. NOT NULL, UNIQUE. One per table. |
-| **Candidate Key** | All attributes that can be primary key (minimal superkey) |
+| **Primary Key** | Uniquely identifies each row. NOT NULL + UNIQUE. One per table. |
+| **Foreign Key** | References primary key of another table. Maintains referential integrity. |
+| **Candidate Key** | All attributes that CAN be primary key |
 | **Super Key** | Any set of attributes that uniquely identifies a row |
-| **Foreign Key** | A field in one table that references the primary key of another table. Establishes relationship. |
-| **Composite Key** | Primary key made of two or more columns |
-| **Alternate Key** | Candidate keys that are NOT selected as primary key |
-| **Unique Key** | Ensures all values are unique. Allows ONE NULL. |
+| **Composite Key** | Primary key made of 2+ columns |
+| **Alternate Key** | Candidate keys NOT selected as primary key |
+| **Unique Key** | Ensures uniqueness. Allows ONE NULL. Multiple per table. |
 
-### Referential Integrity:
-Foreign key must reference an existing primary key or be NULL. Prevents orphan records.
+> **PYQ: Foreign key requires PRIMARY KEY to function in a relational database** ✅
+
+---
+
+## 3.4 ER Model vs Relational Model
+
+### ER Model:
+- An **attribute of an entity CAN have more than one value** (multivalued attribute)
+- An **attribute CAN be composite** (e.g., Name = First + Last)
+
+### Relational Model:
+- In a row of a relational table, an attribute can have **exactly one value or a NULL value**
+- A relational table attribute **CANNOT have more than one value** (1NF rule)
+
+> **PYQ: Which is INCORRECT?**  
+> "In a row of a relational table, an attribute can have more than one value" → **INCORRECT ✅** (violates 1NF)
 
 ---
 
 ## 3.5 Normalization
 
-**Normalization:** Process of organizing data to reduce redundancy and dependency.
-
 | Normal Form | Rule |
 |---|---|
-| **1NF** | No multivalued/repeating groups; all values are atomic (single value per cell) |
-| **2NF** | 1NF + No partial dependency (non-key attributes depend on the ENTIRE primary key) |
-| **3NF** | 2NF + No transitive dependency (non-key attributes depend ONLY on primary key, not on other non-key attributes) |
+| **1NF** | Atomic values only (no multivalued/repeating groups) |
+| **2NF** | 1NF + No partial dependency |
+| **3NF** | 2NF + No transitive dependency |
 | **BCNF** | 3NF + Every determinant is a candidate key |
 
-**Partial Dependency:** Non-key attribute depends on PART of a composite key.  
-**Transitive Dependency:** A → B → C (C depends on A through B).
-
-### Denormalization:
-Intentionally adding redundancy back to improve **read performance** (at cost of write complexity).
-
 ---
 
-## 3.6 Transactions
+## 3.6 Transactions & ACID
 
-**Transaction:** A sequence of operations performed as a single logical unit of work.
-
-### ACID Properties:
 | Property | Description |
 |---|---|
-| **Atomicity** | All or nothing — either all operations succeed or none do |
-| **Consistency** | Database goes from one valid state to another valid state |
-| **Isolation** | Concurrent transactions don't interfere with each other |
-| **Durability** | Once committed, changes are permanent even after system failure |
+| **Atomicity** | All or nothing |
+| **Consistency** | Valid state → valid state |
+| **Isolation** | No interference between concurrent transactions |
+| **Durability** | Committed = permanent |
 
-### Transaction States:
-Active → Partially Committed → Committed (success) OR Failed → Aborted
-
-### Concurrency Control Issues:
+### Concurrency Issues:
 | Problem | Description |
 |---|---|
-| **Dirty Read** | Reading uncommitted data from another transaction |
-| **Non-Repeatable Read** | Same query returns different results in same transaction |
-| **Phantom Read** | New rows appear in results of same query |
-| **Lost Update** | Two transactions update same data; one update lost |
-
-### Isolation Levels:
-| Level | Dirty Read | Non-Repeatable | Phantom |
-|---|---|---|---|
-| Read Uncommitted | Yes | Yes | Yes |
-| Read Committed | No | Yes | Yes |
-| Repeatable Read | No | No | Yes |
-| Serializable | No | No | No |
+| **Dirty Read** | Reading uncommitted data |
+| **Lost Update** | One update overwrites another |
+| **Non-Repeatable Read** | Same query, different results |
+| **Phantom Read** | New rows appear |
 
 ---
 
-## MCQ Practice Questions (50+)
+## 3.7 Joins
+
+| Join | Returns |
+|---|---|
+| **INNER JOIN** | Only matching rows from both |
+| **LEFT JOIN** | All left + matching right |
+| **RIGHT JOIN** | All right + matching left |
+| **FULL OUTER JOIN** | All rows from both |
+| **CROSS JOIN** | Cartesian product |
+| **SELF JOIN** | Table joined with itself |
 
 ---
 
-**Q1.** Which SQL command is used to add a new column to an existing table?
-A. INSERT  B. UPDATE  **C. ALTER ✅**  D. CREATE
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-**Q2.** Which key uniquely identifies each row in a table?
-**A. Primary Key ✅**  B. Foreign Key  C. Alternate Key  D. Super Key
+**Q1.** The DBMS acts as an interface between _____ and _____ of an enterprise-class system:
+
+a) Data and the DBMS  
+b) Application and SQL  
+c) Database application and the database  
+**d) The user and the software ✅**
 
 ---
 
-**Q3.** DELETE is a _____ command:
-A. DDL  **B. DML ✅**  C. DCL  D. TCL
+**Q2.** Which command correctly deletes values in a relation 'teaches'?
+
+**a) Delete from teaches; ✅**  
+b) Delete from teaches where id = 'Null';  
+c) Remove table teaches;  
+d) Drop table teaches;
 
 ---
 
-**Q4.** TRUNCATE is a _____ command:
-**A. DDL ✅**  B. DML  C. DCL  D. TCL
+**Q3.** If data is stored in two places in the db, what happens?
+
+a) Storage is wasted & changing one will cause inconsistency  
+b) Can be more easily accessed  
+**c) Changing data in one spot will cause data inconsistency ✅**  
+d) Storage is wasted
 
 ---
 
-**Q5.** Which normal form eliminates transitive dependency?
-A. 1NF  B. 2NF  **C. 3NF ✅**  D. BCNF
+**Q4.** Which key constraint is required for foreign keys in a relational database?
+
+a) Unique Key  
+**b) Primary Key ✅**  
+c) Candidate Key  
+d) Check Key
 
 ---
 
-**Q6.** ACID property that ensures "all or nothing":
-**A. Atomicity ✅**  B. Consistency  C. Isolation  D. Durability
+**Q5.** Given ER and relational models, which is INCORRECT?
+
+a) An attribute of an entity can have more than one value  
+b) An attribute of an entity can be composite  
+**c) In a row of a relational table, an attribute can have more than one value ✅**  
+d) In a relational table, an attribute can have exactly one value or NULL
 
 ---
 
-**Q7.** Foreign key references which key of another table?
-A. Alternate Key  B. Super Key  **C. Primary Key ✅**  D. Unique Key
+**Q6.** Which SQL command adds a new column?
+
+a) INSERT  
+b) UPDATE  
+**c) ALTER ✅**  
+d) CREATE
 
 ---
 
-**Q8.** Which join returns all rows from both tables?
-A. INNER JOIN  B. LEFT JOIN  C. RIGHT JOIN  **D. FULL OUTER JOIN ✅**
+**Q7.** Primary Key is:
+
+**a) NOT NULL and UNIQUE ✅**  
+b) NULL and UNIQUE  
+c) NOT NULL only  
+d) Optional
 
 ---
 
-**Q9.** Which aggregate function counts rows?
-A. SUM()  B. AVG()  **C. COUNT() ✅**  D. MAX()
+**Q8.** DELETE is a _____ command:
+
+a) DDL  
+**b) DML ✅**  
+c) DCL  
+d) TCL
 
 ---
 
-**Q10.** COMMIT belongs to which SQL category?
-A. DDL  B. DML  C. DCL  **D. TCL ✅**
+**Q9.** TRUNCATE is a _____ command:
+
+**a) DDL ✅**  
+b) DML  
+c) DCL  
+d) TCL
 
 ---
 
-**Q11.** 1NF requires:
-A. No transitive dependency  B. No partial dependency  **C. Atomic values (no repeating groups) ✅**  D. Every determinant is candidate key
+**Q10.** Which normal form eliminates transitive dependency?
+
+a) 1NF  
+b) 2NF  
+**c) 3NF ✅**  
+d) BCNF
 
 ---
 
-**Q12.** GRANT and REVOKE are _____ commands:
-A. DDL  B. DML  **C. DCL ✅**  D. TCL
+**Q11.** ACID "all or nothing" property:
+
+**a) Atomicity ✅**  
+b) Consistency  
+c) Isolation  
+d) Durability
 
 ---
 
-**Q13.** Which keyword is used to remove duplicates in SELECT?
-A. UNIQUE  **B. DISTINCT ✅**  C. REMOVE  D. DIFFERENT
+**Q12.** Foreign key references:
+
+a) Alternate Key  
+**b) Primary Key ✅**  
+c) Super Key  
+d) Unique Key
 
 ---
 
-**Q14.** GROUP BY is used with:
-A. WHERE  **B. Aggregate functions ✅**  C. ORDER BY  D. LIKE
+**Q13.** INNER JOIN returns:
+
+a) All left rows  
+b) All right rows  
+**c) Only matching rows from both ✅**  
+d) All rows
 
 ---
 
-**Q15.** HAVING clause is used to filter:
-A. Individual rows  **B. Groups (after GROUP BY) ✅**  C. Columns  D. Tables
+**Q14.** COUNT() is which type of function?
+
+a) String  
+**b) Aggregate ✅**  
+c) Date  
+d) Conversion
 
 ---
 
-**Q16.** Which normal form eliminates partial dependency?
-A. 1NF  **B. 2NF ✅**  C. 3NF  D. 4NF
+**Q15.** COMMIT belongs to:
+
+a) DDL  
+b) DML  
+c) DCL  
+**d) TCL ✅**
 
 ---
 
-**Q17.** The number of rows in a table is called:
-A. Degree  **B. Cardinality ✅**  C. Domain  D. Schema
+**Q16.** 1NF requires:
+
+**a) Atomic values (no repeating groups) ✅**  
+b) No transitive dependency  
+c) No partial dependency  
+d) Every determinant is candidate key
 
 ---
 
-**Q18.** The number of columns in a table is called:
-**A. Degree ✅**  B. Cardinality  C. Domain  D. Instance
+**Q17.** GRANT and REVOKE are:
+
+a) DDL  
+b) DML  
+**c) DCL ✅**  
+d) TCL
 
 ---
 
-**Q19.** ROLLBACK is used to:
-A. Save changes  **B. Undo changes to last COMMIT or SAVEPOINT ✅**  C. Delete table  D. Lock table
+**Q18.** DISTINCT removes:
+
+**a) Duplicate rows ✅**  
+b) NULL rows  
+c) All rows  
+d) Columns
 
 ---
 
-**Q20.** A Dirty Read occurs when:
-**A. A transaction reads uncommitted data from another ✅**  B. Data is corrupted  C. Index is missing  D. Table is dropped
+**Q19.** HAVING clause filters:
+
+a) Individual rows  
+**b) Groups (after GROUP BY) ✅**  
+c) Columns  
+d) Tables
 
 ---
 
-**Q21.** Which isolation level prevents all concurrency problems?
-A. Read Uncommitted  B. Read Committed  C. Repeatable Read  **D. Serializable ✅**
+**Q20.** 2NF eliminates:
+
+**a) Partial dependency ✅**  
+b) Transitive dependency  
+c) Redundancy  
+d) All anomalies
 
 ---
 
-**Q22.** DROP TABLE does what?
-A. Deletes all rows  B. Removes a column  **C. Deletes the table structure and all data permanently ✅**  D. Empties the table
+**Q21.** Number of rows = ?
+
+a) Degree  
+**b) Cardinality ✅**  
+c) Domain  
+d) Schema
 
 ---
 
-**Q23.** TRUNCATE vs DELETE — which can have a WHERE clause?
-A. TRUNCATE  **B. DELETE ✅**  C. Both  D. Neither
+**Q22.** Number of columns = ?
+
+**a) Degree ✅**  
+b) Cardinality  
+c) Domain  
+d) Instance
 
 ---
 
-**Q24.** A composite key is:
-A. A key with no NULL values  **B. A primary key made of two or more columns ✅**  C. A foreign key  D. An auto-increment key
+**Q23.** ROLLBACK:
+
+a) Saves changes  
+**b) Undoes changes to last COMMIT/SAVEPOINT ✅**  
+c) Deletes table  
+d) Locks table
 
 ---
 
-**Q25.** Candidate keys that are NOT selected as primary key are called:
-A. Super keys  B. Foreign keys  **C. Alternate keys ✅**  D. Composite keys
+**Q24.** Dirty Read:
+
+**a) Reading uncommitted data from another transaction ✅**  
+b) Data corruption  
+c) Missing index  
+d) Table dropped
 
 ---
 
-**Q26.** Which SQL clause is used to sort results?
-A. GROUP BY  **B. ORDER BY ✅**  C. HAVING  D. WHERE
+**Q25.** Serializable isolation level prevents:
+
+a) Only dirty reads  
+b) Only phantom reads  
+**c) All concurrency problems ✅**  
+d) Nothing
 
 ---
 
-**Q27.** Default sort order of ORDER BY?
-**A. ASC (Ascending) ✅**  B. DESC  C. Random  D. None
+**Q26.** DROP TABLE does:
+
+a) Deletes rows  
+b) Removes column  
+**c) Deletes table structure and all data ✅**  
+d) Empties table
 
 ---
 
-**Q28.** INNER JOIN returns:
-A. All rows from left table  B. All rows from right table  **C. Only matching rows from both tables ✅**  D. All rows from both
+**Q27.** TRUNCATE can have WHERE clause?
+
+a) Yes  
+**b) No ✅**
 
 ---
 
-**Q29.** Which constraint ensures a column cannot have NULL values?
-A. UNIQUE  **B. NOT NULL ✅**  C. CHECK  D. DEFAULT
+**Q28.** Composite key is:
+
+a) Foreign key  
+**b) Primary key of 2+ columns ✅**  
+c) Auto-increment key  
+d) Unique key
 
 ---
 
-**Q30.** Which constraint ensures column values are unique?
-**A. UNIQUE ✅**  B. NOT NULL  C. PRIMARY KEY  D. CHECK
+**Q29.** Alternate keys are:
+
+a) Foreign keys  
+**b) Candidate keys NOT chosen as primary key ✅**  
+c) Super keys  
+d) Composite keys
 
 ---
 
-**Q31.** A primary key is _____ and _____:
-A. NULL and UNIQUE  **B. NOT NULL and UNIQUE ✅**  C. NULL and not unique  D. Optional
+**Q30.** ORDER BY default sort:
+
+**a) ASC (Ascending) ✅**  
+b) DESC  
+c) Random  
+d) None
 
 ---
 
-**Q32.** Self Join is:
-A. Joining two different tables  **B. Joining a table with itself ✅**  C. Cross product  D. Natural join
+**Q31.** Self Join is:
+
+**a) Table joined with itself ✅**  
+b) Two different tables  
+c) Cross product  
+d) Natural join
 
 ---
 
-**Q33.** Cross Join produces:
-**A. Cartesian product of both tables ✅**  B. Matching rows  C. Distinct rows  D. Nothing
+**Q32.** Cross Join produces:
+
+**a) Cartesian product ✅**  
+b) Matching rows  
+c) Distinct rows  
+d) Nothing
 
 ---
 
-**Q34.** Which function returns the average of a column?
-A. SUM  **B. AVG ✅**  C. COUNT  D. TOTAL
+**Q33.** WHERE filters _____; HAVING filters _____:
+
+**a) Rows; groups ✅**  
+b) Groups; rows  
+c) Both rows  
+d) Both groups
 
 ---
 
-**Q35.** WHERE clause filters _____ ; HAVING clause filters _____:
-**A. Individual rows; groups ✅**  B. Groups; rows  C. Both filter rows  D. Both filter groups
+**Q34.** Referential integrity is maintained by:
+
+a) Primary Key  
+**b) Foreign Key ✅**  
+c) Unique Key  
+d) Check
 
 ---
 
-**Q36.** INSERT INTO belongs to:
-A. DDL  **B. DML ✅**  C. TCL  D. DCL
+**Q35.** SAVEPOINT:
+
+a) Ends transaction  
+**b) Sets rollback point within transaction ✅**  
+c) Commits  
+d) Deletes
 
 ---
 
-**Q37.** Referential integrity is maintained by:
-A. Primary Key  **B. Foreign Key ✅**  C. Unique Key  D. Check Constraint
+**Q36.** BCNF stands for:
+
+**a) Boyce-Codd Normal Form ✅**  
+b) Basic Codd NF  
+c) Binary Codd NF  
+d) Base Column NF
 
 ---
 
-**Q38.** SAVEPOINT is used to:
-A. End a transaction  **B. Set a rollback point within a transaction ✅**  C. Commit changes  D. Delete data
+**Q37.** Denormalization improves:
+
+**a) Read/query performance ✅**  
+b) Write performance  
+c) Normalization  
+d) Security
 
 ---
 
-**Q39.** BCNF stands for:
-A. Basic Codd Normal Form  **B. Boyce-Codd Normal Form ✅**  C. Binary Codd Normal Form  D. Base Column Normal Form
+**Q38.** A view is:
+
+**a) Virtual table based on a query ✅**  
+b) Physical table  
+c) Stored procedure  
+d) Trigger
 
 ---
 
-**Q40.** Denormalization is done to:
-A. Reduce redundancy  **B. Improve read/query performance ✅**  C. Add more constraints  D. Remove tables
+**Q39.** An index:
+
+**a) Speeds up data retrieval ✅**  
+b) Slows queries  
+c) Deletes data  
+d) Creates tables
 
 ---
 
-**Q41.** A view in SQL is:
-A. A physical table  **B. A virtual table based on a query ✅**  C. A stored procedure  D. A trigger
+**Q40.** LIKE 'A%' matches:
+
+**a) Strings starting with A ✅**  
+b) Ending with A  
+c) Containing A  
+d) Exact 'A'
 
 ---
 
-**Q42.** Which command creates a view?
-A. MAKE VIEW  **B. CREATE VIEW ✅**  C. BUILD VIEW  D. VIEW CREATE
+**Q41.** To check for NULL:
+
+a) = NULL  
+**b) IS NULL ✅**  
+c) == NULL  
+d) EQUALS NULL
 
 ---
 
-**Q43.** An index in a database:
-**A. Speeds up data retrieval ✅**  B. Slows down queries  C. Deletes data  D. Creates tables
+**Q42.** AS keyword creates:
+
+**a) Alias (temporary name) ✅**  
+b) Permanent rename  
+c) New table  
+d) Index
 
 ---
 
-**Q44.** LIKE 'A%' matches:
-**A. Strings starting with A ✅**  B. Strings ending with A  C. Strings containing A  D. Exact match 'A'
+**Q43.** Subquery is also called:
+
+**a) Inner/Nested query ✅**  
+b) Outer query  
+c) Super query  
+d) Main query
 
 ---
 
-**Q45.** LIKE '%A' matches:
-A. Strings starting with A  **B. Strings ending with A ✅**  C. Exact match  D. Any string
+**Q44.** BETWEEN tests for:
+
+a) Pattern match  
+**b) Range of values ✅**  
+c) Existence  
+d) NULL
 
 ---
 
-**Q46.** NULL = NULL evaluates to:
-A. TRUE  B. FALSE  **C. UNKNOWN/NULL ✅**  D. Error
+**Q45.** NULL = NULL evaluates to:
+
+a) TRUE  
+b) FALSE  
+**c) UNKNOWN ✅**  
+d) Error
 
 ---
 
-**Q47.** To check for NULL values, we use:
-A. = NULL  **B. IS NULL ✅**  C. == NULL  D. EQUALS NULL
+**Q46.** Second highest salary query:
+
+a) SELECT MIN(salary)  
+**b) SELECT MAX(salary) WHERE salary < (SELECT MAX(salary)) ✅**  
+c) SELECT salary LIMIT 2  
+d) SELECT TOP 2
 
 ---
 
-**Q48.** Which keyword is used to rename a column/table temporarily?
-**A. AS (Alias) ✅**  B. RENAME  C. CHANGE  D. SET
+**Q47.** A trigger is:
+
+a) A manual procedure  
+**b) Auto-executed procedure on INSERT/UPDATE/DELETE ✅**  
+c) A view  
+d) A constraint
 
 ---
 
-**Q49.** Subquery is also called:
-A. Super query  **B. Inner query / Nested query ✅**  C. Outer query  D. Main query
+**Q48.** Stored procedure is:
+
+**a) Precompiled set of SQL statements stored in DB ✅**  
+b) A temporary table  
+c) A constraint  
+d) A view
 
 ---
 
-**Q50.** Which SQL operator is used to test for a range of values?
-A. IN  **B. BETWEEN ✅**  C. LIKE  D. EXISTS
+**Q49.** Unique key allows:
+
+a) No NULLs  
+**b) One NULL ✅**  
+c) Multiple NULLs  
+d) Duplicates
 
 ---
 
-## Scenario & One-Line Answer Questions
+**Q50.** Primary key per table:
+
+**a) Only one ✅**  
+b) Multiple  
+c) None required  
+d) Depends
 
 ---
 
-**S1.** You need to remove all rows from a table but keep the table structure. Which command?
-> **TRUNCATE TABLE tablename;** — Removes all rows but keeps the table structure. Cannot be rolled back.
+## Scenario / One-Line Answers
 
-**S2.** What is the difference between DELETE and TRUNCATE?
-> **DELETE** is DML (can have WHERE, can rollback, fires triggers). **TRUNCATE** is DDL (removes all rows, cannot rollback, faster, no triggers).
-
-**S3.** A column stores phone numbers like "9876543210, 1234567890" in one cell. Which normal form is violated?
-> **1NF** is violated — 1NF requires atomic values (no multivalued attributes in a single cell).
-
-**S4.** An employee table has (EmpID, EmpName, DeptID, DeptName). DeptName depends on DeptID, not EmpID. What dependency is this?
-> **Transitive Dependency** (EmpID → DeptID → DeptName). Violates **3NF**. Fix by creating a separate Department table.
-
-**S5.** Two transactions modify the same account balance simultaneously and one update is lost. What problem is this?
-> **Lost Update** problem — a concurrency control issue where one transaction's changes are overwritten by another.
-
-**S6.** A transaction reads data that another transaction has not yet committed. What is this called?
-> **Dirty Read** — reading uncommitted data that may later be rolled back.
-
-**S7.** What does ACID stand for?
-> **Atomicity** (all or nothing), **Consistency** (valid state to valid state), **Isolation** (no interference), **Durability** (permanent after commit).
-
-**S8.** What is the difference between HAVING and WHERE?
-> **WHERE** filters individual rows BEFORE grouping. **HAVING** filters groups AFTER GROUP BY.
-
-**S9.** What is referential integrity?
-> A constraint that ensures a **foreign key value must match an existing primary key** in the referenced table, or be NULL. Prevents orphan records.
-
-**S10.** What is the difference between a primary key and a unique key?
-> **Primary Key**: uniquely identifies rows, NOT NULL, only ONE per table. **Unique Key**: ensures uniqueness, allows ONE NULL, multiple per table.
-
-**S11.** Write a query to find the second highest salary.
-> `SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees);`
-
-**S12.** What is a stored procedure?
-> A **precompiled set of SQL statements** stored in the database that can be executed repeatedly. Improves performance and reduces network traffic.
-
-**S13.** What is a trigger?
-> A **special stored procedure that automatically executes** when a specific event (INSERT, UPDATE, DELETE) occurs on a table.
-
-**S14.** What is a cursor in SQL?
-> A database object used to **retrieve and process rows one at a time** from a result set. Used when row-by-row processing is needed.
-
-**S15.** What is normalization in one line?
-> Normalization is the process of **organizing data to minimize redundancy and dependency** by dividing tables and defining relationships.
+**S1.** DBMS acts as interface between user and software/database.  
+**S2.** Data in two places → changing one causes inconsistency (anomaly).  
+**S3.** Foreign key needs primary key of referenced table to maintain referential integrity.  
+**S4.** ER model allows multivalued attributes; relational model does NOT (1NF requires atomic values).  
+**S5.** DELETE = DML (can rollback, can use WHERE). TRUNCATE = DDL (no rollback, no WHERE).  
+**S6.** WHERE filters before grouping; HAVING filters after GROUP BY.  
+**S7.** Normalization = minimize redundancy. Denormalization = add redundancy for read speed.
 
 ---

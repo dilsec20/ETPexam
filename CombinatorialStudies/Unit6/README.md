@@ -4,501 +4,611 @@
 
 ## 6.1 Understanding Algorithms
 
-**Algorithm:** A step-by-step, well-defined procedure for solving a problem in a finite number of steps.
+**Algorithm:** Step-by-step procedure for solving a problem in finite steps.
 
-### Properties of an Algorithm:
-1. **Input** — Zero or more inputs
-2. **Output** — At least one output
-3. **Definiteness** — Each step is clear and unambiguous
-4. **Finiteness** — Must terminate after a finite number of steps
-5. **Effectiveness** — Each step is basic enough to be carried out
+### Properties: Input, Output, Definiteness, Finiteness, Effectiveness
 
 ---
 
-## 6.2 Running Time Analysis & Rate of Growth
+## 6.2 Running Time Analysis & Asymptotic Notation
 
-### Common Time Complexities (Fastest → Slowest):
-
-| Notation | Name | Example |
-|---|---|---|
-| O(1) | Constant | Array access, hash table lookup |
-| O(log n) | Logarithmic | Binary search |
-| O(n) | Linear | Linear search, traversal |
-| O(n log n) | Linearithmic | Merge sort, Quick sort (avg) |
-| O(n²) | Quadratic | Bubble sort, Selection sort, Insertion sort |
-| O(n³) | Cubic | Floyd-Warshall, naive matrix multiply |
-| O(2ⁿ) | Exponential | Recursive Fibonacci (naive), subsets |
-| O(n!) | Factorial | Permutations, brute-force TSP |
-
-### Growth Rate Order:
+### Growth Rate (Fastest → Slowest):
 ```
 O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(n³) < O(2ⁿ) < O(n!)
 ```
 
----
-
-## 6.3 Asymptotic Notation
-
+### Asymptotic Notations:
 | Notation | Meaning | Represents |
 |---|---|---|
-| **Big-O (O)** | Upper bound | Worst case (at most) |
-| **Omega (Ω)** | Lower bound | Best case (at least) |
-| **Theta (Θ)** | Tight bound | Average / exact growth rate |
-| **Little-o (o)** | Strict upper bound | Grows strictly slower |
-| **Little-omega (ω)** | Strict lower bound | Grows strictly faster |
+| **Big-O (O)** | Upper bound | Worst case |
+| **Omega (Ω)** | Lower bound | Best case |
+| **Theta (Θ)** | Tight bound | Average/exact |
 
-**Big-O:** f(n) = O(g(n)) means f(n) ≤ c·g(n) for all n ≥ n₀
-
-### Rules for Big-O:
-1. **Drop constants:** O(5n) = O(n)
-2. **Drop lower-order terms:** O(n² + n) = O(n²)
-3. **Loops:** Single loop = O(n), nested loops = O(n²)
-4. **Sequential:** O(A) + O(B) = O(max(A, B))
-5. **Nested:** O(A) × O(B) = O(A × B)
+### Rules:
+- Drop constants: O(5n) = O(n)
+- Drop lower terms: O(n² + n) = O(n²)
+- Single loop = O(n), nested = O(n²), triple nested = O(n³)
 
 ---
 
-## 6.4 Sorting Algorithms
+## 6.3 Sorting Algorithms
 
-| Algorithm | Best | Average | Worst | Space | Stable | Method |
-|---|---|---|---|---|---|---|
-| **Bubble Sort** | O(n) | O(n²) | O(n²) | O(1) | Yes | Comparison |
-| **Selection Sort** | O(n²) | O(n²) | O(n²) | O(1) | No | Comparison |
-| **Insertion Sort** | O(n) | O(n²) | O(n²) | O(1) | Yes | Comparison |
-| **Merge Sort** | O(n log n) | O(n log n) | O(n log n) | O(n) | Yes | Divide & Conquer |
-| **Quick Sort** | O(n log n) | O(n log n) | O(n²) | O(log n) | No | Divide & Conquer |
-| **Heap Sort** | O(n log n) | O(n log n) | O(n log n) | O(1) | No | Comparison |
-| **Counting Sort** | O(n+k) | O(n+k) | O(n+k) | O(k) | Yes | Non-comparison |
-| **Radix Sort** | O(nk) | O(nk) | O(nk) | O(n+k) | Yes | Non-comparison |
+| Algorithm | Best | Average | Worst | Stable | In-Place |
+|---|---|---|---|---|---|
+| **Bubble Sort** | O(n) | O(n²) | **O(n²)** | ✅ Yes | ✅ Yes |
+| **Selection Sort** | O(n²) | O(n²) | O(n²) | ❌ No | ✅ Yes |
+| **Insertion Sort** | **O(n)** | O(n²) | O(n²) | ✅ Yes | ✅ Yes |
+| **Merge Sort** | O(n log n) | O(n log n) | O(n log n) | ✅ Yes | ❌ O(n) |
+| **Quick Sort** | O(n log n) | O(n log n) | **O(n²)** | ❌ No | ✅ Yes |
+| **Heap Sort** | O(n log n) | O(n log n) | O(n log n) | ❌ No | ✅ Yes |
 
-**Stable sort:** Preserves relative order of equal elements.  
-**In-place sort:** Uses O(1) extra space (Bubble, Selection, Insertion, Heap, Quick).
+> **PYQ: Bubble sort complexity? → O(n²)** ✅
+
+### Insertion Sort:
+- Starts with the **2nd element** (index 1), compares with previous elements
+- Best for **nearly sorted data** — O(n) best case
+
+> **PYQ: Insertion sort begins with the _____ element → b) Second** ✅
+
+### Selection Sort Pass-by-Pass:
+**PYQ: Third pass of selection sort for list 3, 5, 4, 1, 2:**
+```
+Original: 3, 5, 4, 1, 2
+Pass 1: Find min(3,5,4,1,2)=1, swap with pos 0 → 1, 5, 4, 3, 2
+Pass 2: Find min(5,4,3,2)=2, swap with pos 1   → 1, 2, 4, 3, 5
+Pass 3: Find min(4,3,5)=3, swap with pos 2      → 1, 2, 3, 4, 5
+```
+> **PYQ Answer: b) 1, 2, 3, 4, 5** ✅
 
 ---
 
-## 6.5 Searching Algorithms
+## 6.4 Searching
 
-| Algorithm | Time (Avg) | Requirement |
+| Algorithm | Time | Requirement |
 |---|---|---|
-| **Linear Search** | O(n) | None (unsorted OK) |
-| **Binary Search** | O(log n) | Array must be **sorted** |
-
-**Binary Search:** Repeatedly divide search space in half.
-```
-Compare target with middle element:
-- If equal → found
-- If target < middle → search left half
-- If target > middle → search right half
-```
+| **Linear Search** | O(n) | None |
+| **Binary Search** | **O(log n)** | **Sorted array** |
 
 ---
 
-## 6.6 Recursion and Backtracking
+## 6.5 Recursion and Backtracking
 
 ### Recursion:
-A function that **calls itself** to solve smaller subproblems until reaching a **base case**.
+- Function calls itself
+- **Base case** prevents infinite recursion → stack overflow
+- Uses **Stack** data structure
 
-```
-factorial(n):
-    if n == 0: return 1        ← Base case
-    return n * factorial(n-1)  ← Recursive case
-```
-
-### Key Concepts:
-- **Base case:** Condition that stops recursion (without it → infinite recursion → stack overflow)
-- **Recursive case:** The function calls itself with a smaller input
-- **Call stack:** Each recursive call adds a frame to the stack
-
-### Common Recursive Problems:
-- Factorial, Fibonacci, Tower of Hanoi, Binary search, Tree traversals, Merge sort
+### Common: Factorial, Fibonacci, Tower of Hanoi, Tree traversals
 
 ### Backtracking:
-An algorithmic technique that explores all possibilities by **trying a choice**, and if it doesn't work, **undoing it (backtracking)** and trying the next option.
-
-**Template:**
-```
-solve(state):
-    if is_solution(state): return state
-    for each choice:
-        make_choice()
-        if solve(next_state): return true
-        undo_choice()   ← backtrack
-    return false
-```
-
-**Classic Problems:** N-Queens, Sudoku solver, Maze solving, Subset sum, Permutations.
+Try a choice → if it fails → **undo and try next** (N-Queens, Sudoku, Maze)
 
 ---
 
-## 6.7 Dynamic Programming (DP)
+## 6.6 Dynamic Programming (DP)
 
-**Dynamic Programming:** Solving complex problems by breaking them into **overlapping subproblems** and storing solutions to avoid redundant computation.
+**DP:** Break into **overlapping subproblems**, store solutions to avoid recomputation.
 
-### Key Properties:
-1. **Optimal Substructure** — Optimal solution contains optimal solutions of subproblems
-2. **Overlapping Subproblems** — Same subproblems solved multiple times
+### Requirements:
+1. **Optimal Substructure** — optimal solution from optimal sub-solutions
+2. **Overlapping Subproblems** — same subproblems solved repeatedly
 
 ### Approaches:
 | Approach | Description |
 |---|---|
-| **Top-Down (Memoization)** | Recursion + cache results in array/map |
-| **Bottom-Up (Tabulation)** | Iterative, fill table from smallest subproblem up |
+| **Top-Down (Memoization)** | Recursion + cache |
+| **Bottom-Up (Tabulation)** | Iterative, fill table |
 
-### Fibonacci — DP vs Recursion:
-```
-// Naive recursion: O(2ⁿ) — exponential!
-fib(n) = fib(n-1) + fib(n-2)
+> **PYQ: Algorithm that uses past results to find new results → c) Dynamic Programming** ✅
 
-// DP (Bottom-Up): O(n)
-dp[0] = 0, dp[1] = 1
-for i = 2 to n: dp[i] = dp[i-1] + dp[i-2]
-```
+### Classic DP: Fibonacci, LCS, Knapsack 0/1, Coin Change, Edit Distance
 
-### Classic DP Problems:
-- Fibonacci, Longest Common Subsequence (LCS), Longest Increasing Subsequence (LIS), 0/1 Knapsack, Coin Change, Matrix Chain Multiplication, Edit Distance
-
-### Divide & Conquer vs Dynamic Programming:
+### Divide & Conquer vs DP:
 | Feature | D&C | DP |
 |---|---|---|
 | Subproblems | Non-overlapping | Overlapping |
-| Approach | Recursive | Recursive + memoize or iterative |
 | Example | Merge Sort, Quick Sort | Fibonacci, Knapsack |
+
+> **PYQ: Combining optimal solutions to non-overlapping subproblems → c) Divide and Conquer** ✅
 
 ---
 
-## 6.8 Greedy Algorithms
+## 6.7 Greedy Algorithms
 
-**Greedy Algorithm:** Makes the **locally optimal choice** at each step, hoping to find the **global optimum**. Does NOT always give the optimal solution.
+**Greedy:** Make **locally optimal choice** at each step. Does NOT always give optimal solution.
 
-### Properties:
-1. **Greedy Choice Property** — Local optimal choice leads to global optimal
-2. **Optimal Substructure** — Optimal solution contains optimal solutions of subproblems
+### Classic Greedy:
+- Activity Selection (earliest finish time)
+- **Fractional Knapsack** (value/weight ratio)
+- Huffman Coding
+- Dijkstra's shortest path
+- Prim's/Kruskal's MST
+- **Coin Change (greedy)** — pick largest coin first
 
-### Classic Greedy Problems:
-| Problem | Greedy Strategy |
-|---|---|
-| **Activity Selection** | Select activity with earliest finish time |
-| **Fractional Knapsack** | Select items with highest value/weight ratio |
-| **Huffman Coding** | Build tree with lowest frequency nodes first |
-| **Dijkstra's** | Always pick unvisited vertex with smallest distance |
-| **Prim's / Kruskal's MST** | Pick minimum weight edge |
-| **Job Scheduling** | Select jobs with maximum profit/deadline |
-| **Coin Change (greedy)** | Pick largest coin first (works for standard denominations) |
+### Greedy Coin Change — When It FAILS:
+**PYQ: Coins = {1, 3, 4}. Greedy picks largest first. For which sum does it NOT give optimal?**
+
+For sum = 6:
+- Greedy: 4+1+1 = 3 coins
+- Optimal: 3+3 = 2 coins → **Greedy FAILS for 6** ✅
+
+For sum = 10: Greedy: 4+4+1+1=4 coins, Optimal: 4+3+3=3 coins → also fails  
+For sum = 14: Greedy: 4+4+4+1+1=5, Optimal: 4+4+3+3=4 → fails  
+
+> **PYQ Answer: c) 6** ✅ (simplest failing case)
 
 ### Greedy vs DP:
 | Feature | Greedy | DP |
 |---|---|---|
-| Makes choice | Before solving subproblem | After solving subproblems |
-| Optimal always? | Not always | Yes (if applicable) |
-| Speed | Usually faster | Can be slower |
+| Optimal always? | Not always | Yes |
+| Speed | Faster | Can be slower |
 | Example | Fractional Knapsack | 0/1 Knapsack |
 
 ---
 
-## MCQ Practice Questions (50+)
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-**Q1.** Big-O notation represents:
-A. Best case  **B. Upper bound / Worst case ✅**  C. Average case  D. Exact case
+**Q1.** An algorithm which uses past results to find new results is:
+
+a) Brute Force  
+b) Divide and Conquer  
+**c) Dynamic Programming ✅**  
+d) None
 
 ---
 
-**Q2.** Binary search time complexity:
-A. O(n)  **B. O(log n) ✅**  C. O(n²)  D. O(1)
+**Q2.** Insertion sort starts with the _____ element:
+
+a) First  
+**b) Second ✅**  
+c) Third  
+d) Fourth
 
 ---
 
-**Q3.** Binary search requires:
-A. Unsorted array  **B. Sorted array ✅**  C. Linked list  D. Hash table
+**Q3.** Third pass of selection sort for list 3, 5, 4, 1, 2:
+
+a) 1, 2, 4, 3, 5  
+**b) 1, 2, 3, 4, 5 ✅**  
+c) 1, 5, 4, 3, 2  
+d) 3, 5, 4, 1, 2
 
 ---
 
-**Q4.** Which sorting algorithm has worst case O(n²)?
-A. Merge Sort  **B. Quick Sort ✅**  C. Heap Sort  D. Counting Sort
+**Q4.** Bubble sort complexity:
+
+a) O(log n)  
+b) O(n)  
+**c) O(n²) ✅**  
+d) O(n log n)
 
 ---
 
-**Q5.** Merge sort time complexity (all cases):
-**A. O(n log n) ✅**  B. O(n²)  C. O(n)  D. O(log n)
+**Q5.** Combining optimal solutions to non-overlapping subproblems:
+
+a) Dynamic Programming  
+b) Greedy  
+**c) Divide and Conquer ✅**  
+d) Recursion
 
 ---
 
-**Q6.** Which sort is NOT stable?
-A. Merge Sort  B. Bubble Sort  **C. Quick Sort ✅**  D. Insertion Sort
+**Q6.** Coins {1, 3, 4}, greedy (largest first). Which sum does NOT give optimal?
+
+a) 100  
+b) 10  
+**c) 6 ✅**  
+d) 14
 
 ---
 
-**Q7.** Greedy algorithm always gives optimal solution:
-A. True  **B. False — not always ✅**
+**Q7.** Big-O represents:
+
+**a) Upper bound / Worst case ✅**  
+b) Best case  
+c) Average  
+d) Exact
 
 ---
 
-**Q8.** Dynamic Programming requires:
-A. Non-overlapping subproblems  **B. Overlapping subproblems + optimal substructure ✅**  C. No subproblems  D. Random choice
+**Q8.** Binary search complexity:
+
+**a) O(log n) ✅**  
+b) O(n)  
+c) O(n²)  
+d) O(1)
 
 ---
 
-**Q9.** Naive recursive Fibonacci has complexity:
-A. O(n)  **B. O(2ⁿ) ✅**  C. O(n²)  D. O(log n)
+**Q9.** Binary search requires:
+
+**a) Sorted array ✅**  
+b) Unsorted  
+c) Linked list  
+d) Hash table
 
 ---
 
-**Q10.** DP Fibonacci (bottom-up) has complexity:
-**A. O(n) ✅**  B. O(2ⁿ)  C. O(n²)  D. O(n log n)
+**Q10.** Quick sort worst case:
+
+a) O(n log n)  
+**b) O(n²) ✅**  
+c) O(n)  
+d) O(log n)
 
 ---
 
-**Q11.** Backtracking is used for:
-A. Sorting  **B. N-Queens, Sudoku, maze solving ✅**  C. Searching  D. Hashing
+**Q11.** Merge sort (all cases):
+
+**a) O(n log n) ✅**  
+b) O(n²)  
+c) O(n)  
+d) O(log n)
 
 ---
 
-**Q12.** Base case in recursion prevents:
-A. Compilation error  **B. Infinite recursion / stack overflow ✅**  C. Memory leak  D. Syntax error
+**Q12.** Which sort is NOT stable?
+
+a) Merge Sort  
+b) Bubble Sort  
+**c) Quick Sort ✅**  
+d) Insertion Sort
 
 ---
 
-**Q13.** Which sort uses divide and conquer?
-A. Bubble Sort  **B. Merge Sort ✅**  C. Selection Sort  D. Insertion Sort
+**Q13.** Greedy always gives optimal?
+
+**a) No, not always ✅**  
+b) Yes always
 
 ---
 
-**Q14.** Insertion sort best case is:
-**A. O(n) ✅**  B. O(n²)  C. O(n log n)  D. O(1)
+**Q14.** DP requires:
+
+**a) Overlapping subproblems + optimal substructure ✅**  
+b) Non-overlapping  
+c) No subproblems  
+d) Random choice
 
 ---
 
-**Q15.** Selection sort is:
-A. Stable  **B. Not stable ✅**  C. In-place and stable  D. Not in-place
+**Q15.** Naive recursive Fibonacci:
+
+**a) O(2ⁿ) ✅**  
+b) O(n)  
+c) O(n²)  
+d) O(log n)
 
 ---
 
-**Q16.** O(1) means:
-**A. Constant time ✅**  B. Linear time  C. Logarithmic  D. Quadratic
+**Q16.** DP Fibonacci (bottom-up):
+
+**a) O(n) ✅**  
+b) O(2ⁿ)  
+c) O(n²)  
+d) O(n log n)
 
 ---
 
-**Q17.** O(n log n) is faster than:
-A. O(log n)  B. O(n)  **C. O(n²) ✅**  D. O(1)
+**Q17.** Base case prevents:
+
+**a) Infinite recursion / stack overflow ✅**  
+b) Compilation error  
+c) Memory leak  
+d) Syntax error
 
 ---
 
-**Q18.** Space complexity of merge sort:
-A. O(1)  **B. O(n) ✅**  C. O(log n)  D. O(n²)
+**Q18.** Merge sort uses:
+
+**a) Divide and Conquer ✅**  
+b) Greedy  
+c) DP  
+d) Backtracking
 
 ---
 
-**Q19.** Quick sort average case:
-**A. O(n log n) ✅**  B. O(n²)  C. O(n)  D. O(2ⁿ)
+**Q19.** Insertion sort best case:
+
+**a) O(n) ✅**  
+b) O(n²)  
+c) O(n log n)  
+d) O(1)
 
 ---
 
-**Q20.** Omega (Ω) notation represents:
-A. Upper bound  **B. Lower bound ✅**  C. Tight bound  D. Exact value
+**Q20.** Selection sort is:
+
+**a) Not stable ✅**  
+b) Stable  
+c) Both  
+d) Neither
 
 ---
 
-**Q21.** Theta (Θ) notation represents:
-A. Upper bound  B. Lower bound  **C. Tight bound ✅**  D. None
+**Q21.** O(1) means:
+
+**a) Constant time ✅**  
+b) Linear  
+c) Logarithmic  
+d) Quadratic
 
 ---
 
-**Q22.** Drop constants rule: O(5n + 3) = ?
-A. O(5n)  **B. O(n) ✅**  C. O(3)  D. O(5n+3)
+**Q22.** Space complexity of merge sort:
+
+**a) O(n) ✅**  
+b) O(1)  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q23.** Drop lower terms: O(n² + n + 1) = ?
-**A. O(n²) ✅**  B. O(n)  C. O(1)  D. O(n²+n)
+**Q23.** Omega (Ω) represents:
+
+**a) Lower bound ✅**  
+b) Upper bound  
+c) Tight bound  
+d) Exact
 
 ---
 
-**Q24.** Two nested loops of n each: complexity?
-A. O(n)  **B. O(n²) ✅**  C. O(2n)  D. O(n log n)
+**Q24.** Theta (Θ) represents:
+
+**a) Tight bound ✅**  
+b) Upper  
+c) Lower  
+d) None
 
 ---
 
-**Q25.** Fractional Knapsack uses:
-**A. Greedy ✅**  B. DP  C. Backtracking  D. Brute force
+**Q25.** O(5n + 3) = ?
+
+**a) O(n) ✅**  
+b) O(5n)  
+c) O(3)  
+d) O(5n+3)
 
 ---
 
-**Q26.** 0/1 Knapsack uses:
-A. Greedy  **B. Dynamic Programming ✅**  C. Backtracking  D. Linear search
+**Q26.** O(n² + n + 1) = ?
+
+**a) O(n²) ✅**  
+b) O(n)  
+c) O(1)  
+d) O(n²+n)
 
 ---
 
-**Q27.** Dijkstra's algorithm is:
-**A. Greedy ✅**  B. DP  C. Backtracking  D. Divide and conquer
+**Q27.** Two nested loops of n:
+
+**a) O(n²) ✅**  
+b) O(n)  
+c) O(2n)  
+d) O(n log n)
 
 ---
 
-**Q28.** Huffman coding is:
-**A. Greedy ✅**  B. DP  C. Brute force  D. Backtracking
+**Q28.** Fractional Knapsack uses:
+
+**a) Greedy ✅**  
+b) DP  
+c) Backtracking  
+d) Brute force
 
 ---
 
-**Q29.** Tower of Hanoi with n disks requires how many moves?
-A. n  B. n²  **C. 2ⁿ - 1 ✅**  D. n!
+**Q29.** 0/1 Knapsack uses:
+
+**a) Dynamic Programming ✅**  
+b) Greedy  
+c) Backtracking  
+d) Linear search
 
 ---
 
-**Q30.** Memoization is a _____ approach:
-**A. Top-down DP ✅**  B. Bottom-up DP  C. Greedy  D. Brute force
+**Q30.** Tower of Hanoi moves for n disks:
+
+**a) 2ⁿ - 1 ✅**  
+b) n  
+c) n²  
+d) n!
 
 ---
 
-**Q31.** Tabulation is a _____ approach:
-A. Top-down  **B. Bottom-up DP ✅**  C. Greedy  D. Recursive
+**Q31.** Memoization is:
+
+**a) Top-down DP ✅**  
+b) Bottom-up  
+c) Greedy  
+d) Brute force
 
 ---
 
-**Q32.** Which algorithm cannot handle negative edge weights?
-**A. Dijkstra's ✅**  B. Bellman-Ford  C. Floyd-Warshall  D. BFS
+**Q32.** Tabulation is:
+
+**a) Bottom-up DP ✅**  
+b) Top-down  
+c) Greedy  
+d) Recursive
 
 ---
 
-**Q33.** Bubble sort makes how many passes in worst case for n elements?
-A. 1  **B. n-1 ✅**  C. n  D. n²
+**Q33.** Dijkstra cannot handle:
+
+**a) Negative edge weights ✅**  
+b) Weighted edges  
+c) Undirected  
+d) Dense
 
 ---
 
-**Q34.** Best case of bubble sort (optimized):
-**A. O(n) ✅**  B. O(n²)  C. O(n log n)  D. O(1)
+**Q34.** Best sort for nearly sorted data:
+
+**a) Insertion Sort ✅**  
+b) Quick Sort  
+c) Merge Sort  
+d) Selection Sort
 
 ---
 
-**Q35.** Which sorting is best for nearly sorted data?
-A. Quick Sort  B. Merge Sort  **C. Insertion Sort ✅**  D. Selection Sort
+**Q35.** Counting sort is:
+
+**a) Non-comparison sort ✅**  
+b) Comparison sort  
+c) In-place  
+d) Unstable
 
 ---
 
-**Q36.** Counting sort is _____ comparison sort:
-A. A  **B. Not a (non-comparison) ✅**  C. Stable  D. In-place
+**Q36.** In-place sorting means:
+
+**a) O(1) extra space ✅**  
+b) O(n) space  
+c) Not stable  
+d) Uses recursion
 
 ---
 
-**Q37.** In-place sorting means:
-**A. Uses O(1) extra space ✅**  B. Uses O(n) space  C. Not stable  D. Uses recursion
+**Q37.** Linear search worst case:
+
+**a) O(n) ✅**  
+b) O(log n)  
+c) O(1)  
+d) O(n²)
 
 ---
 
-**Q38.** Linear search worst case:
-**A. O(n) ✅**  B. O(log n)  C. O(1)  D. O(n²)
+**Q38.** Recurrence T(n) = 2T(n/2) + n →
+
+**a) O(n log n) — Merge Sort ✅**  
+b) O(log n)  
+c) O(n)  
+d) O(n²)
 
 ---
 
-**Q39.** Recurrence T(n) = 2T(n/2) + n represents:
-**A. Merge Sort — O(n log n) ✅**  B. Binary Search  C. Fibonacci  D. Bubble Sort
+**Q39.** Recurrence T(n) = T(n/2) + O(1) →
+
+**a) O(log n) — Binary Search ✅**  
+b) O(n)  
+c) O(n log n)  
+d) O(n²)
 
 ---
 
-**Q40.** Recurrence T(n) = T(n/2) + O(1) represents:
-A. Merge Sort  **B. Binary Search — O(log n) ✅**  C. Linear Search  D. Fibonacci
+**Q40.** Activity Selection uses:
+
+**a) Greedy (earliest finish time) ✅**  
+b) DP  
+c) Backtracking  
+d) Brute force
 
 ---
 
-**Q41.** Activity Selection Problem is solved by:
-**A. Greedy (earliest finish time) ✅**  B. DP  C. Backtracking  D. Brute force
+**Q41.** N-Queens solved by:
+
+**a) Backtracking ✅**  
+b) Greedy  
+c) DP  
+d) Sorting
 
 ---
 
-**Q42.** N-Queens problem is solved by:
-A. Greedy  B. DP  **C. Backtracking ✅**  D. Sorting
+**Q42.** LCS (Longest Common Subsequence) uses:
+
+**a) Dynamic Programming ✅**  
+b) Greedy  
+c) Backtracking  
+d) Sorting
 
 ---
 
-**Q43.** Longest Common Subsequence (LCS) uses:
-A. Greedy  **B. Dynamic Programming ✅**  C. Backtracking  D. Sorting
+**Q43.** Which is faster: O(n) or O(n log n)?
+
+**a) O(n) ✅**  
+b) O(n log n)  
+c) Same  
+d) Depends
 
 ---
 
-**Q44.** Which is faster: O(n) or O(n log n)?
-**A. O(n) ✅**  B. O(n log n)  C. Same  D. Depends
+**Q44.** Heap sort space:
+
+**a) O(1) ✅**  
+b) O(n)  
+c) O(log n)  
+d) O(n²)
 
 ---
 
-**Q45.** Heap sort space complexity:
-**A. O(1) ✅**  B. O(n)  C. O(log n)  D. O(n²)
+**Q45.** Quick sort worst case occurs when:
+
+**a) Array is already sorted (bad pivot) ✅**  
+b) Array random  
+c) Array unique  
+d) Small array
 
 ---
 
-**Q46.** Quick sort worst case occurs when:
-A. Array is random  **B. Array is already sorted (bad pivot) ✅**  C. Array has unique elements  D. Array is small
+**Q46.** Stable sort means:
+
+**a) Equal elements maintain original relative order ✅**  
+b) Never crashes  
+c) Less memory  
+d) Always O(n log n)
 
 ---
 
-**Q47.** Master Theorem is used to solve:
-A. Any equation  **B. Divide and conquer recurrences ✅**  C. DP problems  D. Greedy problems
+**Q47.** Brute force:
+
+**a) Tries all possible solutions ✅**  
+b) Greedy choice  
+c) DP table  
+d) Recursion only
 
 ---
 
-**Q48.** What does "stable sort" mean?
-**A. Equal elements maintain their original relative order ✅**  B. Algorithm never crashes  C. Uses less memory  D. Always O(n log n)
+**Q48.** Correct growth order:
+
+a) O(n²) < O(n) < O(log n)  
+b) O(n!) < O(2ⁿ) < O(n²)  
+**c) O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!) ✅**  
+d) O(log n) < O(1) < O(n)
 
 ---
 
-**Q49.** Brute force approach:
-**A. Tries all possible solutions ✅**  B. Makes greedy choice  C. Uses DP table  D. Uses recursion only
+**Q49.** Quick sort average:
+
+**a) O(n log n) ✅**  
+b) O(n²)  
+c) O(n)  
+d) O(2ⁿ)
 
 ---
 
-**Q50.** Which is the correct growth order?
-A. O(n²) < O(n) < O(log n)  
-B. O(n!) < O(2ⁿ) < O(n²)  
-**C. O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) < O(n!) ✅**  
-D. O(log n) < O(1) < O(n)
+**Q50.** O(n log n) is the lower bound for:
+
+**a) Comparison-based sorting ✅**  
+b) All sorting  
+c) Searching  
+d) Hashing
 
 ---
 
-## Scenario & One-Line Answer Questions
+## Scenario / One-Line Answers
 
----
-
-**S1.** You need to sort 1 million integers. Which algorithm would you choose and why?
-> **Merge Sort** or **Quick Sort** — both are O(n log n). Merge Sort is stable and consistent; Quick Sort is faster in practice with good pivot selection.
-
-**S2.** You are given a sorted array and need to find if a number exists. Which algorithm?
-> **Binary Search** — O(log n), requires sorted array. Much faster than linear search O(n).
-
-**S3.** What is the difference between recursion and iteration?
-> **Recursion** solves a problem by calling itself (uses call stack, can cause stack overflow). **Iteration** uses loops (while/for). Iteration is generally more space-efficient.
-
-**S4.** When does Dynamic Programming outperform Greedy?
-> When the greedy choice does NOT lead to the optimal solution. Example: 0/1 Knapsack — greedy fails but DP gives the optimal answer.
-
-**S5.** What is memoization?
-> Storing the results of expensive function calls and returning the cached result when the same inputs occur again. It's the **top-down approach** to DP.
-
-**S6.** Why is Quick Sort preferred over Merge Sort in practice?
-> Quick Sort has better **cache performance** (in-place, sequential access) and lower constant factors, despite having O(n²) worst case (rare with good pivot).
-
-**S7.** What is the difference between Divide and Conquer and Dynamic Programming?
-> **D&C** divides into **independent, non-overlapping** subproblems (Merge Sort). **DP** has **overlapping** subproblems and stores solutions to avoid recomputation (Fibonacci).
-
-**S8.** Explain backtracking in one line.
-> Backtracking is a systematic search that tries choices, and **undoes them (backtracks)** when they lead to dead ends.
-
-**S9.** What is the time complexity of accessing the i-th element in an array vs linked list?
-> **Array: O(1)** (direct index access). **Linked List: O(n)** (must traverse from head).
-
-**S10.** Big-O of three nested loops each running n times?
-> **O(n³)** — each loop contributes a factor of n.
-
-**S11.** What is the significance of O(n log n) in sorting?
-> O(n log n) is the **theoretical lower bound** for comparison-based sorting algorithms. No comparison sort can do better than O(n log n) in the worst case.
-
-**S12.** What is tail recursion?
-> A recursive call that is the **last operation** in the function. It can be optimized by the compiler into iteration (tail call optimization), saving stack space.
-
-**S13.** Explain greedy vs DP for Knapsack problem.
-> **Fractional Knapsack** (items can be divided): Greedy works — pick highest value/weight ratio. **0/1 Knapsack** (items are whole): Greedy fails — must use DP to consider all combinations.
-
-**S14.** How many subsets does a set of n elements have?
-> **2ⁿ** subsets (including empty set and the set itself).
-
-**S15.** What is the time complexity of the Tower of Hanoi?
-> **O(2ⁿ)** — requires 2ⁿ - 1 moves for n disks. It grows exponentially.
+**S1.** Insertion sort starts with 2nd element, compares with elements before it, shifts them right to insert correctly.  
+**S2.** Selection sort: In each pass, find minimum in unsorted portion, swap with first unsorted position.  
+**S3.** Greedy coin {1,3,4} for sum 6: Greedy gives 4+1+1=3 coins; Optimal is 3+3=2 coins → greedy fails.  
+**S4.** DP uses past results; D&C splits into independent non-overlapping subproblems.  
+**S5.** Bubble sort: Compare adjacent, swap if wrong order. O(n²). Best O(n) with flag optimization.  
+**S6.** Quick sort worst case: already sorted array with poor pivot (first/last element) → O(n²).  
+**S7.** Binary search requires sorted array; halves search space each step → O(log n).  
+**S8.** Stable sort: if two elements have equal keys, their relative order is preserved. Merge, Bubble, Insertion are stable.  
+**S9.** Tower of Hanoi: n disks → 2ⁿ - 1 moves. For 3 disks = 7 moves.  
+**S10.** Dijkstra = Greedy. Floyd-Warshall = DP. Bellman-Ford = DP. Kruskal/Prim = Greedy.
 
 ---

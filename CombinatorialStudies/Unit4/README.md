@@ -1,471 +1,681 @@
-# Unit 4: Fundamentals of Programming Languages (OOP)
+# Unit 4: Fundamentals of Programming Languages (C/C++/Java/OOP)
 
 ---
 
-## 4.1 C/C++/Java Concepts
+## 4.1 C Language Specifics
 
-### Pointers (C/C++)
-A **pointer** is a variable that stores the **memory address** of another variable.
+### Valid Variable Names in C:
+- Must start with a **letter or underscore** (not digit)
+- Can contain letters, digits, underscores
+- **Cannot be a keyword** (`int`, `float`, `return`, `true`, etc.)
+- Case-sensitive
 
-```c
-int x = 10;
-int *ptr = &x;   // ptr stores address of x
-printf("%d", *ptr); // Dereference: prints 10
-```
+| Variable | Valid? | Reason |
+|---|---|---|
+| `int number;` | ✅ | Valid identifier |
+| `float rate;` | ✅ | Valid |
+| `int variable_count;` | ✅ | Underscore allowed |
+| `int $main;` | ❌ | `$` not allowed in standard C |
+| `float 1var;` | ❌ | Cannot start with digit |
 
-| Concept | Description |
-|---|---|
-| **&** (Address-of) | Returns the address of a variable |
-| **\*** (Dereference) | Accesses the value at the address |
-| **NULL pointer** | Pointer that points to nothing (address 0) |
-| **Dangling pointer** | Pointer that refers to memory that has been freed |
-| **Wild pointer** | Uninitialized pointer; points to random memory |
-| **Void pointer** | Generic pointer (`void *`) that can point to any data type |
-| **Pointer arithmetic** | Incrementing a pointer moves it by the size of the data type |
+> **PYQ: Which is NOT a valid C variable name? → `int $main;`** ✅
 
-### Storage Classes (C/C++):
-| Class | Scope | Lifetime | Default Value |
-|---|---|---|---|
-| **auto** | Local (block) | Until block ends | Garbage |
-| **register** | Local | Until block ends | Garbage |
-| **static** | Local (but persists) | Entire program | 0 |
-| **extern** | Global (across files) | Entire program | 0 |
+### Cannot be a variable name in C:
+- `true` → **Cannot** (it's a keyword/macro in C99+/stdbool.h)
+- `volatile` → Cannot (keyword)
+- `friend` → Valid in C (only keyword in C++)
+- `export` → Valid in C
+
+> **PYQ: Which cannot be a variable name in C? → `true`** ✅
+
+### Result of Logical/Relational Expression in C:
+- Result is always **0 or 1** (integer)
+- `0` if expression is **false**
+- `1` (or any non-zero) if **true**
+- **0 if an expression is false and any positive number if true**
+
+> **PYQ: What is the result of logical or relational expression in C?**  
+> **c) 0 if false, and any positive number if true** ✅
+
+### Operator Precedence & Associativity:
+- Two operators can have: different precedence + same associativity, same precedence + same associativity, different precedence + different associativity
+- **NOT possible: Same precedence, different associativity**
+
+> **PYQ: Which is NOT possible with any 2 operators in C?**  
+> **c) Same precedence, different associativity** ✅
+
+### Functions in C:
+- Functions in C are always **External** by default (can be called from other files unless declared `static`)
+
+> **PYQ: Functions in C Language are always → b) External** ✅
 
 ---
 
-## 4.2 Object-Oriented Programming (OOP)
+## 4.2 C++ Specifics
 
-### Four Pillars of OOP:
+### User-Defined Header File Extension:
+- C++: `.h` or `.hpp`
+- User-defined: `.H` or `.h`
 
-| Pillar | Definition |
-|---|---|
-| **Encapsulation** | Bundling data (variables) and methods (functions) that operate on that data into a single unit (class). Data is hidden using access modifiers (private). |
-| **Abstraction** | Hiding complex implementation details and showing only essential features. Achieved using abstract classes and interfaces. |
-| **Inheritance** | A class (child) acquires properties and methods of another class (parent). Promotes code reuse. |
-| **Polymorphism** | Same name, different behavior. One interface, multiple implementations. |
+> **PYQ: User-defined header file extension in C++? → c) .H** ✅
 
-### Types of Inheritance:
+### Types of Constructors in C++:
 | Type | Description |
 |---|---|
-| **Single** | One child inherits from one parent |
-| **Multilevel** | A → B → C (chain) |
-| **Hierarchical** | Multiple children inherit from one parent |
-| **Multiple** | One child inherits from multiple parents (C++ only, NOT Java) |
-| **Hybrid** | Combination of two or more types |
+| **Default Constructor** | No parameters |
+| **Parameterized Constructor** | Takes parameters |
+| **Copy Constructor** | Creates copy of existing object |
+| **NOT a constructor: Friend Constructor** | ❌ No such thing exists |
 
-> **Java does NOT support multiple inheritance with classes** (to avoid the Diamond Problem). It supports it through **interfaces**.
+> **PYQ: Which is NOT a type of constructor? → d) Friend constructor** ✅
 
-### Diamond Problem:
-When a class inherits from two classes that have a common parent, ambiguity arises about which parent's method to use. Solved in C++ using **virtual inheritance**.
+### C++ Approach:
+- C++ follows **Bottom-Up** approach (OOP: build small objects → combine into larger systems)
+- C follows **Top-Down** approach (Procedural: break big problem → smaller functions)
 
-### Polymorphism Types:
+> **PYQ: Which approach is used by C++? → c) Bottom-up** ✅
+
+### Type Provided by C++ but NOT C:
+- `bool` type is native in C++ but NOT in standard C (C99 added `_Bool` via stdbool.h)
+
+> **PYQ: Type provided by C++ but not C? → d) bool** ✅
+
+### Virtual Inheritance in C++:
+- Used to solve the **Diamond Problem** in multiple inheritance
+- Ensures only **ONE copy** of the base class exists in derived classes
+- **Technique to avoid multiple copies of base class into children/derived class**
+
+> **PYQ: Virtual inheritance? → d) C++ technique to avoid multiple copies of the base class into children/derived class** ✅
+
+### Destructor: `~ClassName()` — called when object is destroyed  
+### Pure Virtual Function: `virtual void func() = 0;` → makes class abstract
+
+---
+
+## 4.3 Java Specifics
+
+### Key Java Facts:
+- Java is a **platform-independent** programming language (Write Once, Run Anywhere — JVM)
+- Java does **NOT have pointers** (uses references instead)
+- Java does NOT support **multiple inheritance with classes** (uses interfaces)
+- Java does NOT support **operator overloading** (except `+` for strings)
+
+> **PYQ: Which is NOT a Java feature? → b) Use of pointers** ✅  
+> **PYQ: Which is true about Java? → d) Java is a platform-independent programming language** ✅
+
+### JavaPATH / JAVA_HOME:
+- Environment variable to set Java path: **JAVA_HOME**
+
+> **PYQ: Which environment variable sets Java path? → d) JAVA_HOME** ✅
+
+### `this` keyword in Java:
+- Refers to **current object**
+- Used for: (1) Referring to instance variable when local has same name, (2) Passing itself to another method, (3) Calling another constructor (constructor chaining)
+- **NOT for:** Passing itself to a method of the same class (it's used for calling method, not passing)
+
+> **PYQ: What is NOT a use of `this`? → b) Passing itself to the method of the same class** ✅
+
+### Polymorphism Types in Java:
 | Type | Also Called | How |
 |---|---|---|
-| **Compile-time** | Static / Early Binding | Method Overloading, Operator Overloading |
-| **Runtime** | Dynamic / Late Binding | Method Overriding (using virtual functions / inheritance) |
+| **Compile-time** | Static / Early binding | Method Overloading |
+| **Runtime** | Dynamic / Late binding | Method Overriding |
+
+> **PYQ: Types of polymorphism? → b) Compile time polymorphism and d) Execution time polymorphism** ✅
+
+---
+
+## 4.4 OOP Concepts
+
+### Four Pillars:
+| Pillar | Definition |
+|---|---|
+| **Encapsulation** | Bundle data + methods; hide data (private) |
+| **Abstraction** | Hide complexity; show essentials (abstract class, interface) |
+| **Inheritance** | Child acquires parent's properties; code reuse |
+| **Polymorphism** | Same name, different behavior |
+
+### Inheritance Types:
+| Type | Description |
+|---|---|
+| Single | A → B |
+| Multilevel | A → B → C |
+| Hierarchical | A → B, A → C |
+| Multiple | B, C → D (C++ only, NOT Java classes) |
+| Hybrid | Combination |
 
 ### Overloading vs Overriding:
 | Feature | Overloading | Overriding |
 |---|---|---|
-| Same name | Yes | Yes |
-| Same parameters | No (different) | Yes (same) |
-| Same class | Yes | No (parent-child) |
+| Parameters | Different | Same |
+| Class | Same class | Parent-child |
 | Binding | Compile-time | Runtime |
-| Return type | Can differ | Must be same (or covariant) |
 
 ### Access Modifiers:
-| Modifier | Same Class | Same Package | Subclass | World |
+| Modifier | Same Class | Package | Subclass | World |
 |---|---|---|---|---|
-| **private** | ✅ | ❌ | ❌ | ❌ |
-| **default** | ✅ | ✅ | ❌ | ❌ |
-| **protected** | ✅ | ✅ | ✅ | ❌ |
-| **public** | ✅ | ✅ | ✅ | ✅ |
-
----
-
-## 4.3 Classes & Objects
-
-| Concept | Definition |
-|---|---|
-| **Class** | Blueprint/template for creating objects. Defines attributes and methods. |
-| **Object** | Instance of a class. Has state (attributes) and behavior (methods). |
-| **Constructor** | Special method that initializes an object. Same name as class. Called automatically. |
-| **Destructor** | Method called when object is destroyed (C++: `~ClassName()`). Java uses garbage collector. |
-| **this keyword** | Reference to the current object |
-| **static** | Belongs to the class, not to any specific object. Shared among all objects. |
-| **final (Java)** | Variable: constant. Method: cannot be overridden. Class: cannot be inherited. |
-| **abstract class** | Cannot be instantiated. Can have abstract (no body) and concrete methods. |
-| **interface** | 100% abstract (all methods abstract). Defines a contract. A class "implements" an interface. |
+| private | ✅ | ❌ | ❌ | ❌ |
+| default | ✅ | ✅ | ❌ | ❌ |
+| protected | ✅ | ✅ | ✅ | ❌ |
+| public | ✅ | ✅ | ✅ | ✅ |
 
 ### Abstract Class vs Interface:
 | Feature | Abstract Class | Interface |
 |---|---|---|
-| Methods | Both abstract and concrete | All abstract (Java 8+: default methods too) |
-| Variables | Any type | Only public static final |
-| Inheritance | extends (single) | implements (multiple) |
-| Constructor | Yes | No |
+| Methods | Abstract + concrete | All abstract (Java 8+: default) |
+| Variables | Any | public static final only |
+| Extend | Single | Multiple |
 
 ---
 
-## 4.4 Parameter Passing
-
-| Method | Description | Language |
-|---|---|---|
-| **Pass by Value** | Copy of the value is passed. Original not modified. | C, Java (primitives) |
-| **Pass by Reference** | Reference (address) is passed. Original IS modified. | C++ (&), Java (objects) |
-| **Pass by Pointer** | Pointer (address) is passed explicitly. | C, C++ |
+## 4.5 Pointers (C/C++)
 
 ```c
-// Pass by Value — original NOT changed
-void change(int x) { x = 100; }
-int a = 5;
-change(a);  // a is still 5
-
-// Pass by Reference (C++) — original CHANGED
-void change(int &x) { x = 100; }
-int a = 5;
-change(a);  // a is now 100
-
-// Pass by Pointer — original CHANGED
-void change(int *x) { *x = 100; }
-int a = 5;
-change(&a);  // a is now 100
+int x = 10;
+int *ptr = &x;     // ptr stores address of x
+printf("%d", *ptr); // Dereference → prints 10
 ```
 
-> **Java:** Primitives are pass by value. Objects are pass by reference of the reference (you can modify object's fields, but reassigning the reference doesn't affect the original).
-
----
-
-## 4.5 Memory Handling
-
-| Memory Area | What's Stored | Allocation |
-|---|---|---|
-| **Stack** | Local variables, function calls, return addresses | Automatic (LIFO) |
-| **Heap** | Dynamically allocated memory (new, malloc) | Manual (or garbage collected) |
-| **Code/Text** | Program instructions | Fixed |
-| **Data (BSS + Global)** | Global/static variables | Fixed |
-
-### C/C++ Memory:
-```c
-// malloc — allocates memory, returns void*
-int *arr = (int*) malloc(5 * sizeof(int));
-free(arr);  // Must free manually
-
-// new (C++) — allocates and calls constructor
-int *p = new int(10);
-delete p;   // Must delete manually
-
-// Memory Leak: Forgetting to free/delete allocated memory
-```
-
-### Java Memory:
-```java
-// Objects created on heap using 'new'
-String s = new String("Hello");
-// Java has Garbage Collector — automatically frees unused objects
-// No need for free() or delete
-```
-
-### Garbage Collection:
-Automatic memory management in Java/C#/Python. The GC identifies and frees objects that are no longer referenced. Key algorithms: Mark-and-Sweep, Generational GC.
-
-### Common Memory Issues:
-| Issue | Description |
+| Type | Description |
 |---|---|
-| **Memory Leak** | Allocated memory never freed → program uses more and more memory |
-| **Dangling Pointer** | Pointer to freed memory → undefined behavior |
-| **Buffer Overflow** | Writing beyond allocated memory → security vulnerability |
-| **Stack Overflow** | Infinite recursion or too many function calls exhausts stack |
-| **Segmentation Fault** | Accessing memory that doesn't belong to the program |
+| **NULL pointer** | Points to nothing (0) |
+| **Dangling pointer** | Points to freed memory |
+| **Wild pointer** | Uninitialized |
+| **Void pointer** | `void*` — generic, any type |
+
+### Storage Classes:
+| Class | Scope | Lifetime | Default |
+|---|---|---|---|
+| **auto** | Local | Block | Garbage |
+| **register** | Local | Block | Garbage |
+| **static** | Local (persists) | Entire program | 0 |
+| **extern** | Global (across files) | Entire program | 0 |
 
 ---
 
-## MCQ Practice Questions (50+)
+## 4.6 Parameter Passing & Memory
+
+| Method | Original Changed? |
+|---|---|
+| **Pass by Value** | No (copy) |
+| **Pass by Reference** (&) | Yes |
+| **Pass by Pointer** (*) | Yes |
+
+### Memory:
+| Area | Stores |
+|---|---|
+| **Stack** | Local vars, function calls (automatic, LIFO) |
+| **Heap** | Dynamic allocation (malloc/new) |
+| **Code** | Program instructions |
+| **Data** | Global/static variables |
 
 ---
 
-**Q1.** Which OOP pillar hides data using access modifiers?
-**A. Encapsulation ✅**  B. Abstraction  C. Inheritance  D. Polymorphism
+## MCQ Practice Questions (50+ PYQ Style)
 
 ---
 
-**Q2.** Method overloading is an example of:
-**A. Compile-time polymorphism ✅**  B. Runtime polymorphism  C. Inheritance  D. Encapsulation
+**Q1.** Which is NOT a valid C variable name?
+
+a) int number;  
+b) float rate;  
+c) int variable_count;  
+**d) int $main; ✅**
 
 ---
 
-**Q3.** Method overriding is an example of:
-A. Compile-time polymorphism  **B. Runtime polymorphism ✅**  C. Encapsulation  D. Abstraction
+**Q2.** Which cannot be a variable name in C?
+
+a) volatile  
+**b) true ✅**  
+c) friend  
+d) export
 
 ---
 
-**Q4.** Java does NOT support:
-A. Single inheritance  **B. Multiple inheritance with classes ✅**  C. Interfaces  D. Encapsulation
+**Q3.** Result of logical or relational expression in C?
+
+a) True or False  
+b) 0 or 1  
+**c) 0 if false and any positive number if true ✅**  
+d) None
 
 ---
 
-**Q5.** Which keyword prevents a class from being inherited in Java?
-A. static  B. abstract  **C. final ✅**  D. private
+**Q4.** Which is NOT possible with any 2 operators in C?
+
+a) Different precedence, same associativity  
+b) Different precedence, different associativity  
+**c) Same precedence, different associativity ✅**  
+d) All of the mentioned
 
 ---
 
-**Q6.** A pointer stores:
-A. A value  **B. A memory address ✅**  C. A file path  D. A function
+**Q5.** Functions in C Language are always:
+
+a) Internal  
+**b) External ✅**  
+c) Both  
+d) Neither
 
 ---
 
-**Q7.** A dangling pointer points to:
-A. NULL  B. A valid variable  **C. Memory that has been freed ✅**  D. The stack
+**Q6.** User-defined header file extension in C++?
+
+a) .Hg  
+b) .Cpp  
+**c) .H ✅**  
+d) .Hf
 
 ---
 
-**Q8.** Constructor is called:
-A. Manually  **B. Automatically when an object is created ✅**  C. At program end  D. Never
+**Q7.** Which is NOT a type of constructor in C++?
+
+a) Default constructor  
+b) Parameterized constructor  
+c) Copy constructor  
+**d) Friend constructor ✅**
 
 ---
 
-**Q9.** Which access modifier is most restrictive?
-**A. private ✅**  B. protected  C. public  D. default
+**Q8.** C++ uses which approach?
+
+a) Left-right  
+b) Right-left  
+**c) Bottom-up ✅**  
+d) Top-down
 
 ---
 
-**Q10.** Abstract class CAN have:
-A. Only abstract methods  **B. Both abstract and concrete methods ✅**  C. Only static methods  D. No methods
+**Q9.** Type provided by C++ but NOT C?
+
+a) double  
+b) float  
+c) int  
+**d) bool ✅**
 
 ---
 
-**Q11.** An interface in Java can contain:
-A. Instance variables  **B. Only public static final variables and abstract methods ✅**  C. Constructors  D. Private methods
+**Q10.** Virtual inheritance in C++ is:
+
+a) Enhance multiple inheritance  
+b) Access private members  
+c) Avoid multiple inheritances  
+**d) Avoid multiple copies of base class in derived class ✅**
 
 ---
 
-**Q12.** `this` keyword refers to:
-A. Parent class  **B. Current object ✅**  C. Static method  D. Main method
+**Q11.** Which is true about Java?
+
+a) Sequence-dependent  
+b) Code dependent  
+c) Platform-dependent  
+**d) Platform-independent ✅**
 
 ---
 
-**Q13.** `super` keyword refers to:
-**A. Parent class ✅**  B. Current object  C. Static variable  D. Interface
+**Q12.** Which is NOT a Java feature?
+
+a) Object-oriented  
+**b) Use of pointers ✅**  
+c) Portable  
+d) Dynamic and Extensible
 
 ---
 
-**Q14.** Which storage class retains value between function calls?
-A. auto  B. register  **C. static ✅**  D. extern
+**Q13.** Environment variable to set Java path?
+
+a) MAVEN_Path  
+b) JavaPATH  
+c) JAVA  
+**d) JAVA_HOME ✅**
 
 ---
 
-**Q15.** Default storage class in C:
-**A. auto ✅**  B. static  C. extern  D. register
+**Q14.** What is NOT a use of `this` keyword in Java?
+
+a) Referring to instance variable  
+**b) Passing itself to method of same class ✅**  
+c) Passing itself to another method  
+d) Calling another constructor
 
 ---
 
-**Q16.** Pass by value means:
-**A. Copy of value is passed; original not changed ✅**  B. Address is passed  C. Original is changed  D. Both are changed
+**Q15.** Types of polymorphism in Java:
+
+a) Multiple polymorphism  
+**b) Compile time polymorphism ✅**  
+c) Multilevel polymorphism  
+**d) Execution time polymorphism ✅**
 
 ---
 
-**Q17.** In C++, pass by reference uses:
-A. * operator  **B. & operator ✅**  C. -> operator  D. . operator
+**Q16.** Encapsulation hides data using:
+
+**a) Access modifiers (private) ✅**  
+b) Abstract class  
+c) Inheritance  
+d) Polymorphism
 
 ---
 
-**Q18.** Memory allocated using malloc() is on:
-A. Stack  **B. Heap ✅**  C. Code segment  D. Register
+**Q17.** Method overloading is:
+
+**a) Compile-time polymorphism ✅**  
+b) Runtime polymorphism  
+c) Inheritance  
+d) Encapsulation
 
 ---
 
-**Q19.** Local variables are stored on:
-**A. Stack ✅**  B. Heap  C. Data segment  D. Code segment
+**Q18.** Method overriding is:
+
+a) Compile-time  
+**b) Runtime polymorphism ✅**  
+c) Encapsulation  
+d) Abstraction
 
 ---
 
-**Q20.** Java garbage collector frees:
-A. Stack memory  **B. Heap memory (unreferenced objects) ✅**  C. Code memory  D. All memory
+**Q19.** Java does NOT support:
+
+a) Single inheritance  
+**b) Multiple inheritance with classes ✅**  
+c) Interfaces  
+d) Encapsulation
 
 ---
 
-**Q21.** Diamond Problem occurs in:
-A. Single inheritance  **B. Multiple inheritance ✅**  C. Encapsulation  D. Abstraction
+**Q20.** `final` in Java prevents class from being:
+
+**a) Inherited ✅**  
+b) Instantiated  
+c) Compiled  
+d) Loaded
 
 ---
 
-**Q22.** Polymorphism means:
-A. One class, one method  **B. Same name, different behavior ✅**  C. Hiding data  D. Copying classes
+**Q21.** A pointer stores:
+
+a) Value  
+**b) Memory address ✅**  
+c) File path  
+d) Function
 
 ---
 
-**Q23.** Which OOP concept promotes code reuse?
-A. Encapsulation  B. Abstraction  **C. Inheritance ✅**  D. Polymorphism
+**Q22.** Dangling pointer points to:
+
+a) NULL  
+**b) Freed memory ✅**  
+c) Valid variable  
+d) Stack
 
 ---
 
-**Q24.** A NULL pointer in C has the value:
-A. -1  **B. 0 ✅**  C. 1  D. Undefined
+**Q23.** Constructor is called:
+
+**a) Automatically when object is created ✅**  
+b) Manually  
+c) At program end  
+d) Never
 
 ---
 
-**Q25.** `void*` is called a:
-A. Null pointer  **B. Void/Generic pointer ✅**  C. Dangling pointer  D. Wild pointer
+**Q24.** Most restrictive access modifier:
+
+**a) private ✅**  
+b) protected  
+c) public  
+d) default
 
 ---
 
-**Q26.** Which function allocates memory in C?
-**A. malloc() ✅**  B. alloc()  C. new  D. create()
+**Q25.** Abstract class CAN have:
+
+**a) Both abstract and concrete methods ✅**  
+b) Only abstract  
+c) Only static  
+d) No methods
 
 ---
 
-**Q27.** Which function frees memory in C?
-A. delete  **B. free() ✅**  C. remove()  D. dispose()
+**Q26.** `super` refers to:
+
+**a) Parent class ✅**  
+b) Current object  
+c) Static variable  
+d) Interface
 
 ---
 
-**Q28.** In C++, `new` keyword does:
-A. Only allocates memory  **B. Allocates memory AND calls constructor ✅**  C. Only calls constructor  D. Frees memory
+**Q27.** `static` member retains value:
+
+a) Until block ends  
+**b) Entire program lifetime ✅**  
+c) One function call  
+d) Never
 
 ---
 
-**Q29.** Stack overflow is caused by:
-A. Too many variables  **B. Infinite recursion ✅**  C. Memory leak  D. NULL pointer
+**Q28.** Default storage class in C:
+
+**a) auto ✅**  
+b) static  
+c) extern  
+d) register
 
 ---
 
-**Q30.** Buffer overflow is a _____ vulnerability:
-**A. Security ✅**  B. Performance  C. Logic  D. Syntax
+**Q29.** Pass by value:
+
+**a) Copy passed; original NOT changed ✅**  
+b) Address passed  
+c) Original changed  
+d) Both changed
 
 ---
 
-**Q31.** Memory leak occurs when:
-**A. Allocated memory is never freed ✅**  B. Memory is freed twice  C. Stack overflows  D. Too many variables
+**Q30.** malloc() allocates on:
+
+a) Stack  
+**b) Heap ✅**  
+c) Code  
+d) Register
 
 ---
 
-**Q32.** Abstraction is achieved in Java using:
-A. Encapsulation  **B. Abstract classes and interfaces ✅**  C. Loops  D. Arrays
+**Q31.** Local variables are on:
+
+**a) Stack ✅**  
+b) Heap  
+c) Data segment  
+d) Code
 
 ---
 
-**Q33.** In Java, all objects are created on:
-A. Stack  **B. Heap ✅**  C. Code segment  D. Register
+**Q32.** Java garbage collector frees:
+
+**a) Unreferenced objects on heap ✅**  
+b) Stack  
+c) Code  
+d) All
 
 ---
 
-**Q34.** A class that cannot be instantiated is:
-**A. Abstract class ✅**  B. Final class  C. Static class  D. Inner class
+**Q33.** Diamond Problem occurs in:
+
+**a) Multiple inheritance ✅**  
+b) Single  
+c) Encapsulation  
+d) Abstraction
 
 ---
 
-**Q35.** Overloading requires:
-A. Same parameters  **B. Different parameters (type, number, or order) ✅**  C. Different class  D. Same return type
+**Q34.** OOP concept that promotes code reuse:
+
+**a) Inheritance ✅**  
+b) Encapsulation  
+c) Abstraction  
+d) Polymorphism
 
 ---
 
-**Q36.** Overriding requires:
-**A. Same method signature in parent and child class ✅**  B. Different parameters  C. Same class  D. Static methods
+**Q35.** NULL pointer value:
+
+**a) 0 ✅**  
+b) -1  
+c) 1  
+d) Undefined
 
 ---
 
-**Q37.** Which type of inheritance is: A → B → C?
-A. Single  **B. Multilevel ✅**  C. Multiple  D. Hierarchical
+**Q36.** `new` in C++:
+
+a) Only allocates memory  
+**b) Allocates memory AND calls constructor ✅**  
+c) Only calls constructor  
+d) Frees memory
 
 ---
 
-**Q38.** Which type: Multiple children from one parent?
-A. Single  B. Multilevel  C. Multiple  **D. Hierarchical ✅**
+**Q37.** Stack overflow caused by:
+
+**a) Infinite recursion ✅**  
+b) Memory leak  
+c) NULL pointer  
+d) Too many variables
 
 ---
 
-**Q39.** Static method belongs to:
-A. Object  **B. Class ✅**  C. Constructor  D. Destructor
+**Q38.** Memory leak:
+
+**a) Allocated memory never freed ✅**  
+b) Memory freed twice  
+c) Stack overflow  
+d) Segfault
 
 ---
 
-**Q40.** Destructor in C++ starts with:
-**A. ~ (tilde) ✅**  B. #  C. @  D. !
+**Q39.** Abstraction achieved by:
+
+**a) Abstract classes and interfaces ✅**  
+b) Loops  
+c) Arrays  
+d) Pointers
 
 ---
 
-**Q41.** Java primitives (int, char, float) are passed by:
-**A. Value ✅**  B. Reference  C. Pointer  D. Name
+**Q40.** Overloading requires:
+
+**a) Different parameters (type/number/order) ✅**  
+b) Same parameters  
+c) Different class  
+d) Same return type
 
 ---
 
-**Q42.** `sizeof` operator in C returns:
-A. Value of variable  **B. Size in bytes ✅**  C. Address  D. Type
+**Q41.** Overriding requires:
+
+**a) Same method signature in parent-child ✅**  
+b) Different parameters  
+c) Same class  
+d) Static methods
 
 ---
 
-**Q43.** Which concept allows different classes to be treated through the same interface?
-A. Encapsulation  B. Abstraction  C. Inheritance  **D. Polymorphism ✅**
+**Q42.** A → B → C is which inheritance?
+
+a) Single  
+**b) Multilevel ✅**  
+c) Multiple  
+d) Hierarchical
 
 ---
 
-**Q44.** `final` variable in Java is:
-**A. A constant — its value cannot change ✅**  B. Always 0  C. Private  D. Static
+**Q43.** Multiple children from one parent:
+
+**a) Hierarchical ✅**  
+b) Single  
+c) Multilevel  
+d) Multiple
 
 ---
 
-**Q45.** Virtual function in C++ enables:
-A. Compile-time binding  **B. Runtime polymorphism ✅**  C. Multiple inheritance  D. Encapsulation
+**Q44.** Static method belongs to:
+
+**a) Class ✅**  
+b) Object  
+c) Constructor  
+d) Destructor
 
 ---
 
-**Q46.** Pure virtual function syntax in C++:
-A. `virtual void func() {}`  **B. `virtual void func() = 0;` ✅**  C. `abstract void func();`  D. `void func() = 0;`
+**Q45.** Destructor in C++ starts with:
+
+**a) ~ (tilde) ✅**  
+b) #  
+c) @  
+d) !
 
 ---
 
-**Q47.** A class with at least one pure virtual function is:
-**A. Abstract class ✅**  B. Final class  C. Static class  D. Concrete class
+**Q46.** `sizeof` returns:
+
+**a) Size in bytes ✅**  
+b) Value  
+c) Address  
+d) Type
 
 ---
 
-**Q48.** `extern` storage class allows a variable to be used:
-A. Only in one function  **B. Across multiple files ✅**  C. Only in main  D. Only in loops
+**Q47.** `final` variable in Java:
+
+**a) Constant — value cannot change ✅**  
+b) Always 0  
+c) Private  
+d) Static
 
 ---
 
-**Q49.** Copy constructor creates:
-**A. A new object as a copy of an existing object ✅**  B. A pointer  C. A static object  D. A destructor
+**Q48.** Pure virtual function in C++:
+
+**a) `virtual void func() = 0;` ✅**  
+b) `virtual void func() {}`  
+c) `abstract void func();`  
+d) `void func() = 0;`
+
+---
+
+**Q49.** `extern` allows variable across:
+
+**a) Multiple files ✅**  
+b) One function  
+c) One block  
+d) Main only
 
 ---
 
 **Q50.** Shallow copy copies:
-A. All data deeply  **B. Only references/pointers (not the pointed data) ✅**  C. Nothing  D. Only primitives
+
+**a) Only references/pointers (not pointed data) ✅**  
+b) Everything deeply  
+c) Nothing  
+d) Only primitives
 
 ---
 
-## Scenario & One-Line Answer Questions
+## Scenario / One-Line Answers
 
----
-
-**S1.** What is the difference between a class and an object?
-> A **class** is a blueprint/template. An **object** is an instance of a class with actual values.
-
-**S2.** Can a constructor be private? When would you use it?
-> Yes. Private constructor is used in the **Singleton design pattern** — to ensure only one instance of a class exists.
-
-**S3.** What is the difference between an abstract class and an interface?
-> Abstract class can have both abstract and concrete methods, constructors, and any variables. Interface (traditionally) has only abstract methods and constants. A class can implement multiple interfaces but extend only one abstract class.
-
-**S4.** What is the difference between `==` and `.equals()` in Java?
-> `==` compares **references** (memory addresses). `.equals()` compares **values** (content). For strings: `"abc" == "abc"` may be true (string pool), but use `.equals()` for reliable comparison.
-
-**S5.** What is early binding vs late binding?
-> **Early binding** (compile-time): method call resolved at compile time (overloading). **Late binding** (runtime): resolved at runtime using actual object type (overriding, virtual functions).
-
-**S6.** What happens if you forget to free memory allocated with malloc()?
-> **Memory leak** — the program continues to use more memory over time because the allocated block is never returned to the system.
-
-**S7.** What is the difference between stack and heap memory?
-> **Stack**: automatic, fast, LIFO, stores local variables. **Heap**: manual allocation (malloc/new), slower, stores dynamic data, must be freed manually (or by GC).
-
-**S8.** Can we overload the main() method in Java?
-> Yes, but the JVM always calls `public static void main(String[] args)`. Other overloaded versions can be called manually.
-
-**S9.** What is the difference between shallow copy and deep copy?
-> **Shallow copy** copies references — both original and copy point to the same data. **Deep copy** creates completely new copies of all referenced data.
-
-**S10.** What is a friend function in C++?
-> A function declared with `friend` keyword inside a class that can access private and protected members of that class, even though it's not a member.
+**S1.** `$main` invalid in C because `$` is not allowed in standard C variable names.  
+**S2.** `true` cannot be variable in C because it's defined as a macro in `<stdbool.h>` (C99+).  
+**S3.** C logical expressions always return 0 (false) or non-zero positive (true).  
+**S4.** Same precedence, different associativity is impossible for any 2 C operators.  
+**S5.** C functions default to external linkage (accessible from other files unless declared `static`).  
+**S6.** Virtual inheritance = one copy of base class in diamond hierarchy.  
+**S7.** Java is platform-independent because it compiles to bytecode executed by JVM.  
+**S8.** Java has no pointers — it uses references (no pointer arithmetic possible).  
+**S9.** `bool` is native in C++ but not in C (C99 added `_Bool`).  
+**S10.** Bottom-up = OOP approach (C++); Top-down = Procedural (C).
 
 ---
